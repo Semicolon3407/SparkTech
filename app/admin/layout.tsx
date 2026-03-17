@@ -1,0 +1,49 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { AuthProvider, useAuth } from "@/contexts/auth-context";
+import { Loader2 } from "lucide-react";
+
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && (!user || user.role !== "admin")) {
+      router.push("/login?redirect=/admin");
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user || user.role !== "admin") {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <AdminSidebar />
+      <main className="lg:pl-64 min-h-screen">{children}</main>
+    </div>
+  );
+}
+
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <AuthProvider>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </AuthProvider>
+  );
+}
