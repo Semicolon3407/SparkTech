@@ -49,7 +49,7 @@ export default function LocationsPage() {
 
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-20">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-950 mb-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-950 mb-6">
             Find <span className="text-primary">Our Stores</span>
           </h1>
           <p className="text-xl text-gray-500 font-medium leading-relaxed max-w-2xl mx-auto">
@@ -64,18 +64,18 @@ export default function LocationsPage() {
               className={`p-10 rounded-[40px] border border-gray-100 bg-white shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:shadow-primary/5 ${store.isMain ? 'ring-2 ring-primary ring-opacity-10' : ''}`}
             >
               {store.isMain && (
-                <div className="inline-block px-3 py-1 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-full mb-6">
+                <div className="inline-block px-3 py-1 bg-primary text-white text-[10px] font-extrabold uppercase tracking-widest rounded-full mb-6">
                   Main Showroom
                 </div>
               )}
-              <h2 className="text-2xl font-black text-gray-950 tracking-tight mb-8">{store.name}</h2>
+              <h2 className="text-2xl font-extrabold text-gray-950 tracking-tight mb-8">{store.name}</h2>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center shrink-0">
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Address</div>
+                    <div className="text-[11px] font-extrabold uppercase tracking-widest text-gray-400 mb-1">Address</div>
                     <div className="text-[15px] font-bold text-gray-950 leading-relaxed">{store.address}</div>
                   </div>
                 </div>
@@ -84,7 +84,7 @@ export default function LocationsPage() {
                     <Phone className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Phone</div>
+                    <div className="text-[11px] font-extrabold uppercase tracking-widest text-gray-400 mb-1">Phone</div>
                     <div className="text-[15px] font-bold text-gray-950 leading-relaxed">{store.phone}</div>
                   </div>
                 </div>
@@ -93,7 +93,7 @@ export default function LocationsPage() {
                     <Clock className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <div className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-1">Opening Hours</div>
+                    <div className="text-[11px] font-extrabold uppercase tracking-widest text-gray-400 mb-1">Opening Hours</div>
                     <div className="text-[15px] font-bold text-gray-950 leading-relaxed">{store.hours}</div>
                   </div>
                 </div>
@@ -109,7 +109,7 @@ export default function LocationsPage() {
             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl text-primary group-hover:scale-110 transition-all">
               <Search className="h-10 w-10" />
             </div>
-            <h3 className="text-2xl font-black text-gray-950 tracking-tight mb-4">Interactive Store Locator</h3>
+            <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight mb-4">Interactive Store Locator</h3>
             <p className="text-gray-500 font-medium max-w-sm mx-auto">
               Our interactive map is coming soon. In the meantime, you can find us at the addresses listed above.
             </p>

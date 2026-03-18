@@ -20,11 +20,11 @@ export default function AboutPage() {
       />
 
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-20">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-950 mb-6">
-            Nepal&apos;s Premium <span className="text-primary">Gadget Destination</span>
+        <div className="mb-12 mt-4 max-w-2xl">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-950 mb-4 uppercase">
+            Nepal&apos;s Premium Gadget Destination
           </h1>
-          <p className="text-xl text-gray-500 font-medium leading-relaxed">
+          <p className="text-base text-gray-500 leading-relaxed font-medium">
             Since our inception, {APP_NAME} has been dedicated to bringing the latest and greatest technology to Nepal with a focus on quality, authenticity, and customer service.
           </p>
         </div>
@@ -40,13 +40,13 @@ export default function AboutPage() {
 
         <div className="grid md:grid-cols-2 gap-16 mb-24">
           <div className="space-y-6">
-            <h2 className="text-2xl font-black text-gray-950 tracking-tight">Our Vision</h2>
+            <h2 className="text-2xl font-extrabold text-gray-950 tracking-tight">Our Vision</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
               We envision a Nepal where every technology enthusiast has access to the same global innovations as the rest of the world, without compromise. Our mission is to bridge the gap between global tech launches and local availability.
             </p>
           </div>
           <div className="space-y-6">
-            <h2 className="text-2xl font-black text-gray-950 tracking-tight">Our Commitment</h2>
+            <h2 className="text-2xl font-extrabold text-gray-950 tracking-tight">Our Commitment</h2>
             <p className="text-gray-600 leading-relaxed font-medium">
               Every product sold at {APP_NAME} comes with a guarantee of authenticity. We partner directly with brands and authorized distributors to ensure our customers receive genuine products with official warranties.
             </p>
@@ -62,7 +62,7 @@ export default function AboutPage() {
             { label: 'Brands', value: '100+' },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-3xl font-black text-primary mb-2">{stat.value}</div>
+              <div className="text-3xl font-extrabold text-primary mb-2">{stat.value}</div>
               <div className="text-sm font-bold text-gray-400 uppercase tracking-widest">{stat.label}</div>
             </div>
           ))}

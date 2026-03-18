@@ -77,18 +77,18 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
 
       {/* Brand & Badge Header */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-black uppercase tracking-[0.3em] text-primary bg-primary/5 px-4 py-1.5 rounded-full">
+        <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary bg-primary/5 px-4 py-1.5 rounded-full">
           {product.brand}
         </span>
         <div className="flex items-center gap-2">
           {outOfStock ? (
-            <Badge variant="destructive" className="rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest leading-none">Sold Out</Badge>
+            <Badge variant="destructive" className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest leading-none">Sold Out</Badge>
           ) : lowStock ? (
-            <Badge variant="secondary" className="bg-orange-50 text-orange-600 border-none rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest leading-none">
+            <Badge variant="secondary" className="bg-orange-50 text-orange-600 border-none rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest leading-none">
               Limited Stock
             </Badge>
           ) : (
-            <Badge variant="secondary" className="bg-emerald-50 text-emerald-600 border-none rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest leading-none">
+            <Badge variant="secondary" className="bg-emerald-50 text-emerald-600 border-none rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest leading-none">
               In Stock
             </Badge>
           )}
@@ -98,8 +98,8 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
       {/* Name & Pricing */}
       <div className="space-y-4">
         <h1 className={cn(
-          "font-black tracking-tight text-gray-950 leading-[0.95] uppercase",
-          isCompact ? "text-2xl md:text-3xl" : "text-4xl md:text-5xl lg:text-6xl"
+          "font-extrabold tracking-tight text-gray-950 leading-[0.95] uppercase",
+          isCompact ? "text-xl md:text-2xl" : "text-3xl md:text-4xl lg:text-5xl"
         )}>
           {product.name}
         </h1>
@@ -112,7 +112,7 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
             showValue
           />
           <Separator orientation="vertical" className="h-4 bg-gray-200" />
-          <span className="text-[11px] font-black uppercase tracking-widest text-gray-400">
+          <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">
             Art. No: {product.sku}
           </span>
         </div>
@@ -123,7 +123,7 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
               price={product.price}
               comparePrice={product.comparePrice}
               size="xl"
-              className="font-black text-gray-950"
+              className="font-extrabold text-gray-950"
             />
           </div>
         )}
@@ -134,10 +134,11 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
               price={product.price}
               comparePrice={product.comparePrice}
               size="lg"
-              className="font-black text-gray-950"
+              className="font-extrabold text-gray-950"
             />
           </div>
         )}
+
 
       </div>
 
@@ -147,7 +148,7 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
       <div className="space-y-8">
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-widest text-gray-400">Select Quantity</span>
+            <span className="text-xs font-extrabold uppercase tracking-widest text-gray-400">Select Quantity</span>
             {!outOfStock && <span className="text-[11px] font-bold text-gray-400">{product.stock} units available</span>}
           </div>
           
@@ -163,7 +164,7 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
               <Button
                 size={isCompact ? "default" : "lg"}
                 className={cn(
-                  "flex-1 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/10 transition-all hover:translate-y-[-2px] hover:shadow-2xl hover:shadow-primary/20",
+                  "flex-1 rounded-2xl font-extrabold uppercase tracking-widest text-xs shadow-xl shadow-primary/10 transition-all hover:translate-y-[-2px] hover:shadow-2xl hover:shadow-primary/20",
                   isCompact ? "h-12" : "h-14"
                 )}
                 disabled={outOfStock || inCart}
@@ -204,7 +205,7 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
                 <div className="p-3 rounded-2xl bg-gray-50 group">
                   <feature.icon className="h-5 w-5 text-gray-400 group-hover:text-primary transition-colors" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 leading-tight px-2">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 leading-tight px-2">
                   {feature.text}
                 </span>
               </div>
@@ -218,7 +219,7 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
         <div className="flex items-center justify-between pt-2">
           <button 
             onClick={handleShare}
-            className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors"
+            className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-gray-400 hover:text-primary transition-colors"
           >
             <Share2 className="h-4 w-4" />
             Share with friends

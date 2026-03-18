@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
+import { SlidersHorizontal, X, ChevronDown, Check } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
@@ -21,12 +22,31 @@ interface ProductFiltersProps {
 
 const allBrands = [...new Set([...BRANDS.mobile, ...BRANDS.laptop, ...BRANDS.audio])];
 
+const COLORS = [
+  { name: 'Black', hex: '#000000' },
+  { name: 'White', hex: '#FFFFFF' },
+  { name: 'Silver', hex: '#C0C0C0' },
+  { name: 'Gold', hex: '#D4AF37' },
+  { name: 'Blue', hex: '#0000FF' },
+  { name: 'Red', hex: '#FF0000' },
+  { name: 'Space Gray', hex: '#71706E' },
+];
+
+const DISCOUNTS = [
+  { label: '10% or more', value: '10' },
+  { label: '20% or more', value: '20' },
+  { label: '30% or more', value: '30' },
+  { label: '50% or more', value: '50' },
+];
+
 export function ProductFilters({ category, isMobileTrigger = false }: ProductFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const currentBrands = searchParams.get('brands')?.split(',').filter(Boolean) || [];
+  const currentColor = searchParams.get('colors') || '';
+  const currentDiscount = searchParams.get('discount') || '';
   const currentMinPrice = parseInt(searchParams.get('minPrice') || '0');
   const currentMaxPrice = parseInt(searchParams.get('maxPrice') || '500000');
   const inStock = searchParams.get('inStock') === 'true';
@@ -44,138 +64,57 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
       params.set(key, String(value));
     }
     
-    params.set('page', '1'); // Reset to first page
-    router.push(`?${params.toString()}`);
-  };
-
-  const toggleBrand = (brand: string) => {
-    const newBrands = currentBrands.includes(brand)
-      ? currentBrands.filter((b) => b !== brand)
-      : [...currentBrands, brand];
-    updateFilters('brands', newBrands);
-  };
-
-  const applyPriceRange = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (priceRange[0] > 0) {
-      params.set('minPrice', String(priceRange[0]));
-    } else {
-      params.delete('minPrice');
-    }
-    if (priceRange[1] < 500000) {
-      params.set('maxPrice', String(priceRange[1]));
-    } else {
-      params.delete('maxPrice');
-    }
     params.set('page', '1');
-    router.push(`?${params.toString()}`);
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const clearAllFilters = () => {
     const params = new URLSearchParams();
     if (category) params.set('category', category);
-    router.push(`?${params.toString()}`);
+    router.push(`?${params.toString()}`, { scroll: false });
     setPriceRange([0, 500000]);
   };
 
-  const hasActiveFilters = currentBrands.length > 0 || currentMinPrice > 0 || currentMaxPrice < 500000 || inStock;
+  const hasActiveFilters = currentBrands.length > 0 || currentMinPrice > 0 || currentMaxPrice < 500000 || inStock || currentColor || currentDiscount;
 
   const FilterContent = () => (
     <div className="space-y-10">
-      {/* Categories */}
-      {!category && (
-        <Collapsible defaultOpen>
-          <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
-            <span className="text-sm font-black uppercase tracking-widest text-gray-950 group-hover:text-primary transition-colors">Categories</span>
-            <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pt-4 space-y-3">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.slug}
-                onClick={() => updateFilters('category', cat.slug)}
-                className={cn(
-                  'block w-full text-left text-[15px] font-bold transition-all hover:translate-x-1',
-                  searchParams.get('category') === cat.slug ? 'text-primary' : 'text-gray-500 hover:text-gray-950'
-                )}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </CollapsibleContent>
-        </Collapsible>
-      )}
-
-      {/* Price Range */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
-          <span className="text-sm font-black uppercase tracking-widest text-gray-950">Price Range</span>
-          <ChevronDown className="h-4 w-4 text-gray-400" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-6 space-y-6">
-          <Slider
-            value={priceRange}
-            onValueChange={setPriceRange}
-            min={0}
-            max={500000}
-            step={100}
-            className="w-full"
-          />
-          <div className="flex items-center justify-between text-sm font-black text-gray-950">
-            <span>{formatPrice(priceRange[0])}</span>
-            <span>{formatPrice(priceRange[1])}</span>
+      {/* Price Filter */}
+      <div className="space-y-5 pb-8 border-b border-gray-100">
+        <h3 className="text-[15px] font-bold text-gray-950">Price</h3>
+        <div className="flex items-center gap-3">
+          <div className="flex-1 space-y-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">From</span>
+            <input
+              type="number"
+              value={priceRange[0]}
+              onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+              className="w-full h-11 px-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
+            />
           </div>
-          <Button size="sm" onClick={applyPriceRange} className="w-full h-11 rounded-xl shadow-lg border-none">
-            Apply Price
-          </Button>
-        </CollapsibleContent>
-      </Collapsible>
-
-      {/* Brands */}
-      <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
-          <span className="text-sm font-black uppercase tracking-widest text-gray-950">Brands</span>
-          <ChevronDown className="h-4 w-4 text-gray-400" />
-        </CollapsibleTrigger>
-        <CollapsibleContent className="pt-4 space-y-3">
-          <div className="grid gap-2">
-            {allBrands.map((brand) => (
-              <div key={brand} className="flex items-center gap-3">
-                <Checkbox
-                  id={`brand-${brand}`}
-                  checked={currentBrands.includes(brand)}
-                  onCheckedChange={() => toggleBrand(brand)}
-                  className="rounded-md border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                />
-                <Label htmlFor={`brand-${brand}`} className="text-[15px] font-bold text-gray-600 cursor-pointer hover:text-gray-950 transition-colors">
-                  {brand}
-                </Label>
-              </div>
-            ))}
+          <span className="text-gray-300 mt-6">-</span>
+          <div className="flex-1 space-y-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">To</span>
+            <input
+              type="number"
+              value={priceRange[1]}
+              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 0])}
+              className="w-full h-11 px-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
+            />
           </div>
-        </CollapsibleContent>
-      </Collapsible>
-
-      {/* Availability */}
-      <div className="flex items-center gap-3 py-2 border-t border-gray-100 mt-6 pt-6">
-        <Checkbox
-          id="in-stock"
-          checked={inStock}
-          onCheckedChange={(checked) => updateFilters('inStock', checked ? 'true' : null)}
-          className="rounded-md border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-        />
-        <Label htmlFor="in-stock" className="text-[15px] font-bold text-gray-950 cursor-pointer">
-          In Stock Only
-        </Label>
-      </div>
-
-      {/* Clear Filters */}
-      {hasActiveFilters && (
-        <Button variant="ghost" size="sm" onClick={clearAllFilters} className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 font-black uppercase tracking-widest text-[10px] mt-4">
-          <X className="h-3 w-3 mr-2" />
-          Clear All Filters
+        </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-full text-[11px] font-extrabold uppercase tracking-widest h-11 rounded-md border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-[0.98]"
+          onClick={() => {
+            updateFilters('minPrice', String(priceRange[0]));
+            updateFilters('maxPrice', String(priceRange[1]));
+          }}
+        >
+          Update Price
         </Button>
-      )}
+      </div>
     </div>
   );
 
@@ -183,33 +122,27 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
     return (
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" className="w-full h-12 rounded-xl border-gray-200 font-bold bg-white shadow-sm hover:bg-gray-50 text-gray-950">
-            <SlidersHorizontal className="h-4 w-4 mr-2" />
-            Refine
-            {hasActiveFilters && (
-              <span className="ml-2 h-5 w-5 rounded-full bg-primary text-white text-[10px] flex items-center justify-center font-black">
-                !
-              </span>
-            )}
+          <Button variant="outline" className="w-full flex justify-between px-4 h-11 border-gray-200 text-gray-600 font-bold text-xs uppercase tracking-wider">
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal className="h-4 w-4" />
+              Filter By
+            </div>
+            <ChevronDown className="h-4 w-4" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-[320px] p-0 border-r-0 rounded-r-[32px] overflow-hidden">
-          <SheetHeader className="p-6 border-b border-gray-100 bg-gray-50/50">
-            <SheetTitle className="text-xl font-black uppercase tracking-tight">Refine Results</SheetTitle>
+        <SheetContent side="left" className="w-full sm:w-[350px] p-6">
+          <SheetHeader className="mb-8">
+            <SheetTitle className="text-left font-extrabold uppercase tracking-widest">Filter</SheetTitle>
           </SheetHeader>
-          <div className="p-6 h-full overflow-y-auto pb-20">
-            <FilterContent />
-          </div>
+          <FilterContent />
         </SheetContent>
       </Sheet>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="w-[280px] shrink-0 hidden lg:block pr-8">
       <FilterContent />
     </div>
   );
 }
-
-

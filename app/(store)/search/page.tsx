@@ -41,7 +41,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
       {/* Search Header Section */}
       <div className="max-w-3xl mx-auto mb-16 text-center">
-        <h1 className="text-3xl md:text-5xl font-black tracking-tight text-gray-950 mb-6 font-sans">
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-950 mb-6 font-sans">
           {q ? 'Search Results' : 'Search Our Catalog'}
         </h1>
         <p className="text-gray-500 mb-8 font-medium max-w-lg mx-auto">
@@ -87,7 +87,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 <Search className="h-12 w-12 text-primary" strokeWidth={1.5} />
               </div>
               <div className="space-y-2">
-                <h2 className="text-2xl font-black text-gray-950 tracking-tight">Ready to explore?</h2>
+                <h2 className="text-2xl font-extrabold text-gray-950 tracking-tight">Ready to explore?</h2>
                 <p className="text-gray-500 font-medium">
                   Enter a product name, brand, or category above to start your search.
                 </p>
@@ -100,7 +100,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       {/* Recommended for you - Optional additional section */}
       {!q && (
         <div className="mt-24 pt-16 border-t">
-          <h3 className="text-2xl font-black text-gray-950 mb-10 tracking-tight">Popular Categories</h3>
+          <h3 className="text-2xl font-extrabold text-gray-950 mb-10 tracking-tight">Popular Categories</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {['Apple', 'Android', 'Audio', 'Laptops'].map((cat) => (
               <a 

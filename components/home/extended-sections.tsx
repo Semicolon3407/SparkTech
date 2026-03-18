@@ -26,9 +26,9 @@ export function HomeTheatreSection() {
           <span className="text-[#E63946] font-bold tracking-[0.2em] uppercase text-xs mb-4 block">
             OLIZ STUDIO
           </span>
-          <h2 className="text-white text-5xl md:text-7xl font-black mb-6 leading-[0.9] tracking-tighter">
+          <h2 className="text-white text-3xl md:text-5xl font-bold mb-6 leading-tight">
             Experience our <br />
-            <span className="text-white">Home Theatre</span>
+            Home Theatre
           </h2>
           <p className="text-white/80 text-lg md:text-xl font-medium mb-8 leading-relaxed max-w-2xl">
             Experience cinema-level audio in the comfort of your home. Our curated collection of high-performance speakers, subwoofers, and amplifiers delivers rich, immersive sound engineered for home theatre perfection. Build the ultimate movie, music, and gaming setup with professional-grade audio made simple.
@@ -53,12 +53,12 @@ export function DroneShowcaseSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Text Content */}
           <div className="order-2 lg:order-1">
-            <span className="inline-block px-4 py-1.5 bg-[#E63946] text-white text-[11px] font-black uppercase tracking-widest rounded-md mb-8">
+            <span className="inline-block px-4 py-1.5 bg-[#E63946] text-white text-[11px] font-extrabold uppercase tracking-widest rounded-md mb-8">
               NEW ARRIVAL
             </span>
-            <h2 className="text-5xl md:text-7xl font-black text-gray-950 mb-8 leading-[0.9] tracking-tighter uppercase">
-              ANTIGRAVITY <br />
-              360° DRONE
+            <h2 className="text-3xl md:text-5xl font-bold text-gray-950 mb-6 leading-tight">
+              Antigravity <br />
+              360° Drone
             </h2>
             <div className="space-y-6 text-gray-500 text-base md:text-lg font-medium leading-relaxed max-w-xl mb-10">
               <p>
@@ -71,7 +71,7 @@ export function DroneShowcaseSection() {
             
             <div className="mb-10">
               <span className="text-gray-400 text-xs font-bold uppercase tracking-widest block mb-2">STARTING AT</span>
-              <div className="text-[#E63946] text-4xl md:text-5xl font-black tracking-tight">
+              <div className="text-[#E63946] text-4xl md:text-5xl font-extrabold tracking-tight">
                 Rs. 2,45,000
               </div>
             </div>
@@ -130,7 +130,7 @@ export function CategoryBrowseSection() {
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-black text-center mb-16 tracking-tighter text-gray-950">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-950">
           Browse Categories
         </h2>
         

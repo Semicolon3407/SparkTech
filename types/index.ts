@@ -188,11 +188,14 @@ export interface ProductFilters {
   maxPrice?: number;
   rating?: number;
   inStock?: boolean;
+  colors?: string;
+  discount?: string;
   search?: string;
   sort?: 'price-asc' | 'price-desc' | 'newest' | 'rating' | 'popular';
   page?: number;
   limit?: number;
 }
+
 
 
 // Dashboard Stats Types

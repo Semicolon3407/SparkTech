@@ -100,13 +100,157 @@ export const CATEGORIES = [
 
     ]
   },
-  { name: 'Android', slug: 'android', hasDropdown: true },
-  { name: 'Video / Photography', slug: 'video-photography', hasDropdown: true },
-  { name: 'Audio', slug: 'audio', hasDropdown: true },
-  { name: 'Home Theatre', slug: 'home-theatre', hasDropdown: true },
-  { name: 'Lifestyle', slug: 'lifestyle', hasDropdown: true },
-  { name: 'Accessories', slug: 'accessories', hasDropdown: true },
-  { name: 'EV', slug: 'ev', hasDropdown: true },
+  { 
+    name: 'Android', 
+    slug: 'android', 
+    hasDropdown: true,
+    items: [
+      {
+        title: 'Popular Brands',
+        links: [
+          { label: 'Samsung', href: '/category/mobile-phones?brands=Samsung' },
+          { label: 'Oppo', href: '/category/mobile-phones?brands=Oppo' },
+          { label: 'Nothing', href: '/category/mobile-phones?brands=Nothing' },
+          { label: 'Redmi', href: '/category/mobile-phones?brands=Redmi' },
+          { label: 'Xiaomi', href: '/category/mobile-phones?brands=Xiaomi' },
+          { label: 'OnePlus', href: '/category/mobile-phones?brands=OnePlus' },
+        ]
+      }
+    ]
+  },
+  { 
+    name: 'Audio', 
+    slug: 'audio', 
+    hasDropdown: true,
+    items: [
+      {
+        title: 'Top Audio Brands',
+        links: [
+          { label: 'JBL', href: '/products?brands=JBL' },
+          { label: 'Marshall', href: '/products?brands=Marshall' },
+          { label: 'KEF', href: '/products?brands=KEF' },
+          { label: 'Sony', href: '/products?brands=Sony' },
+          { label: 'YoloLiv', href: '/products?brands=YoloLiv' },
+          { label: 'Devialet', href: '/products?brands=Devialet' },
+          { label: 'Hollyland', href: '/products?brands=Hollyland' },
+          { label: 'Saramonic', href: '/products?brands=Saramonic' },
+          { label: 'Boya', href: '/products?brands=Boya' },
+        ]
+      },
+      {
+        title: 'Microphones',
+        links: [
+          { label: 'Lavalier Microphone', href: '/category/audio?search=lavalier' },
+          { label: 'Wireless Microphone', href: '/category/audio?search=wireless-mic' },
+          { label: 'USB Microphone', href: '/category/audio?search=usb-mic' },
+          { label: 'Shotgun Microphone', href: '/category/audio?search=shotgun' },
+          { label: 'Conference Microphone', href: '/category/audio?search=conference' },
+          { label: 'Wireless Intercom System', href: '/category/audio?search=intercom' },
+          { label: 'Wireless Transmission System', href: '/category/audio?search=transmission' },
+          { label: 'Video Streaming Switcher', href: '/category/audio?search=switcher' },
+          { label: 'Audio Mixer', href: '/category/audio?search=mixer' },
+        ]
+      },
+      {
+        title: 'Speaker and Earphones',
+        links: [
+          { label: 'Earphones', href: '/category/audio?search=earphones' },
+          { label: 'Earbuds', href: '/category/audio?search=earbuds' },
+          { label: 'Headphones', href: '/category/audio?search=headphones' },
+          { label: 'Portable Bluetooth Speakers', href: '/category/audio?search=bluetooth-speaker' },
+          { label: 'Multimedia Speakers', href: '/category/audio?search=multimedia' },
+          { label: 'Party Speakers', href: '/category/audio?search=party-speaker' },
+        ]
+      },
+      {
+        title: 'Podcast',
+        links: [
+          { label: 'Podcast Microphones', href: '/category/audio?search=podcast-mic' },
+          { label: 'Podcast Headphones', href: '/category/audio?search=podcast-headphone' },
+          { label: 'Podcast System', href: '/category/audio?search=podcast-system' },
+          { label: 'Live Content System', href: '/category/audio?search=live-content' },
+          { label: 'Audio Switching', href: '/category/audio?search=audio-switching' },
+        ]
+      }
+    ]
+  },
+  { 
+    name: 'Accessories', 
+    slug: 'accessories', 
+    hasDropdown: true,
+    items: [
+      {
+        title: 'Phone Cases',
+        links: [
+          { label: 'iPhone 17 Series', href: '/category/accessories?search=iphone-17-case' },
+          { label: 'iPhone 16 Series', href: '/category/accessories?search=iphone-16-case' },
+          { label: 'iPhone 15 Series', href: '/category/accessories?search=iphone-15-case' },
+          { label: 'iPhone 14 Series', href: '/category/accessories?search=iphone-14-case' },
+          { label: 'iPhone 13 Series', href: '/category/accessories?search=iphone-13-case' },
+          { label: 'Other iPhone Series', href: '/category/accessories?search=iphone-case' },
+          { label: 'Android Cases', href: '/category/accessories?search=android-case' },
+        ]
+      },
+      {
+        title: 'iPad Cases / Accessories',
+        links: [
+          { label: 'iPad Series', href: '/category/accessories?search=ipad-case' },
+          { label: 'iPad Air Series', href: '/category/accessories?search=ipad-air-case' },
+          { label: 'iPad Pro Series', href: '/category/accessories?search=ipad-pro-case' },
+          { label: 'iPad Mini Series', href: '/category/accessories?search=ipad-mini-case' },
+          { label: 'iPad Keyboard', href: '/category/accessories?search=ipad-keyboard' },
+          { label: 'iPad Pencil', href: '/category/accessories?search=pencil' },
+          { label: 'iPad Stand', href: '/category/accessories?search=ipad-stand' },
+        ]
+      },
+      {
+        title: 'MacBook Accessories',
+        links: [
+          { label: 'Hubs', href: '/category/accessories?search=hub' },
+          { label: 'Sleeve / Cases', href: '/category/accessories?search=macbook-sleeve' },
+          { label: 'Backpacks', href: '/category/accessories?search=backpack' },
+          { label: 'Keyboard Protection', href: '/category/accessories?search=keyboard-cover' },
+          { label: 'Webcam', href: '/category/accessories?search=webcam' },
+        ]
+      },
+      {
+        title: 'Charging',
+        links: [
+          { label: 'Audio / Video Cables', href: '/category/accessories?search=cable' },
+          { label: 'Power Adapters', href: '/category/accessories?search=adapter' },
+          { label: 'Charging Cables', href: '/category/accessories?search=charge-cable' },
+          { label: 'Portable Chargers', href: '/category/accessories?search=power-bank' },
+          { label: 'MagSafe Chargers', href: '/category/accessories?search=magsafe' },
+          { label: 'Multiplugs', href: '/category/accessories?search=multiplug' },
+        ]
+      },
+      {
+        title: 'Screen Protector',
+        links: [
+          { label: 'iPhone', href: '/category/accessories?search=iphone-protector' },
+          { label: 'iPad', href: '/category/accessories?search=ipad-protector' },
+          { label: 'Apple Watch', href: '/category/accessories?search=watch-protector' },
+          { label: 'MacBook', href: '/category/accessories?search=macbook-protector' },
+        ]
+      },
+      {
+        title: 'Data Storage',
+        links: [
+          { label: 'Thunderbolt Series', href: '/category/accessories?search=thunderbolt' },
+          { label: 'Flash Drives', href: '/category/accessories?search=flash-drive' },
+          { label: 'Memory Cards', href: '/category/accessories?search=memory-card' },
+          { label: 'SSDs', href: '/category/accessories?search=ssd' },
+        ]
+      },
+      {
+        title: 'PC Accessories',
+        links: [
+          { label: 'Mouse', href: '/category/accessories?search=mouse' },
+          { label: 'Keyboard', href: '/category/accessories?search=keyboard' },
+        ]
+      }
+    ]
+  },
   { name: 'Brands', slug: 'brands' },
   { name: 'On Sale', slug: 'on-sale', highlight: true },
 ] as const;

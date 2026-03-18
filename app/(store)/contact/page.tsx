@@ -44,11 +44,11 @@ export default function ContactPage() {
       />
 
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-20">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-950 mb-6">
-            Get in <span className="text-primary">Touch</span>
+        <div className="mb-12 mt-4 max-w-xl">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-950 mb-4 uppercase">
+            Get in Touch
           </h1>
-          <p className="text-xl text-gray-500 font-medium leading-relaxed max-w-2xl mx-auto">
+          <p className="text-base text-gray-500 leading-relaxed font-medium">
             Have a question or need support? Our team of tech experts is ready to help you with anything you need.
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function ContactPage() {
         <div className="grid lg:grid-cols-3 gap-12 mb-20">
           <div className="lg:col-span-2">
             <div className="bg-white p-10 rounded-[40px] shadow-2xl shadow-primary/5 border border-gray-100">
-              <h2 className="text-2xl font-black text-gray-950 tracking-tight mb-8">Send us a Message</h2>
+              <h2 className="text-2xl font-extrabold text-gray-950 tracking-tight mb-8">Send us a Message</h2>
               <form className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -79,7 +79,7 @@ export default function ContactPage() {
                     className="min-h-[180px] rounded-2xl bg-gray-50 border-transparent focus:bg-white focus:ring-primary/20 transition-all font-medium p-4" 
                   />
                 </div>
-                <Button className="w-full h-[60px] rounded-2xl text-lg font-black tracking-tight shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all">
+                <Button className="w-full h-[60px] rounded-2xl text-lg font-extrabold tracking-tight shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-[0.99] transition-all">
                   Send Message <Send className="ml-2 h-5 w-5" />
                 </Button>
               </form>
@@ -88,7 +88,7 @@ export default function ContactPage() {
 
           <div className="space-y-8">
             <div className="space-y-6">
-              <h2 className="text-2xl font-black text-gray-950 tracking-tight">Contact Information</h2>
+              <h2 className="text-2xl font-extrabold text-gray-950 tracking-tight">Contact Information</h2>
               <div className="space-y-4">
                 {CONTACT_INFO.map((info) => (
                   <div key={info.label} className="p-6 bg-gray-50/50 rounded-3xl border border-gray-100 flex items-start gap-4">
@@ -96,7 +96,7 @@ export default function ContactPage() {
                       <info.icon className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <div className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-0.5">{info.label}</div>
+                      <div className="text-[11px] font-extrabold uppercase tracking-widest text-gray-400 mb-0.5">{info.label}</div>
                       <div className="text-sm font-bold text-gray-950 mb-1">{info.value}</div>
                       <div className="text-xs font-medium text-gray-500">{info.subValue}</div>
                     </div>
@@ -106,7 +106,7 @@ export default function ContactPage() {
             </div>
 
             <div className="space-y-6 pt-6">
-              <h2 className="text-xl font-black text-gray-950 tracking-tight px-1">Connect with us</h2>
+              <h2 className="text-xl font-extrabold text-gray-950 tracking-tight px-1">Connect with us</h2>
               <div className="flex gap-4">
                 {[Instagram, Facebook, Youtube].map((Icon, i) => (
                   <a 

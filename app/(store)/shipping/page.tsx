@@ -21,7 +21,7 @@ export default function ShippingPage() {
 
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-950 mb-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-gray-950 mb-6">
             Reliable <span className="text-primary">Delivery</span>
           </h1>
           <p className="text-xl text-gray-500 font-medium leading-relaxed max-w-2xl mx-auto">
@@ -40,14 +40,14 @@ export default function ShippingPage() {
               <div className="w-14 h-14 bg-white rounded-[20px] shadow-sm flex items-center justify-center mb-6 text-primary">
                 <item.icon className="h-7 w-7" />
               </div>
-              <h3 className="text-sm font-black text-gray-950 uppercase tracking-widest mb-2">{item.title}</h3>
+              <h3 className="text-sm font-extrabold text-gray-950 uppercase tracking-widest mb-2">{item.title}</h3>
               <p className="text-xs font-bold text-gray-400">{item.text}</p>
             </div>
           ))}
         </div>
 
         <div className="bg-white p-12 rounded-[50px] shadow-2xl shadow-primary/5 border border-gray-100 mb-20">
-          <h2 className="text-3xl font-black text-gray-950 tracking-tight mb-10">Delivery Methods</h2>
+          <h2 className="text-3xl font-extrabold text-gray-950 tracking-tight mb-10">Delivery Methods</h2>
           <div className="space-y-12">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center shrink-0">

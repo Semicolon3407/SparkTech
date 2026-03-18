@@ -34,7 +34,7 @@ export function TrustPillars() {
             <pillar.icon className="h-7 w-7 text-gray-400 group-hover:text-primary transition-colors" strokeWidth={1.5} />
           </div>
           <div className="space-y-1">
-            <h4 className="text-sm font-black uppercase tracking-widest text-gray-950">
+            <h4 className="text-sm font-extrabold uppercase tracking-widest text-gray-950">
               {pillar.title}
             </h4>
             <p className="text-xs font-bold text-gray-400">

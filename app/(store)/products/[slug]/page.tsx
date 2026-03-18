@@ -78,19 +78,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <TabsList className="flex items-center gap-12 border-b rounded-none h-auto p-0 bg-transparent mb-12">
                 <TabsTrigger
                   value="description"
-                  className="pb-4 text-xs font-black uppercase tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary transition-all p-0"
+                  className="pb-4 text-xs font-extrabold uppercase tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary transition-all p-0"
                 >
                   Highlights
                 </TabsTrigger>
                 <TabsTrigger
                   value="specifications"
-                  className="pb-4 text-xs font-black uppercase tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary transition-all p-0"
+                  className="pb-4 text-xs font-extrabold uppercase tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary transition-all p-0"
                 >
                   Tech Specs
                 </TabsTrigger>
                 <TabsTrigger
                   value="reviews"
-                  className="pb-4 text-xs font-black uppercase tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary transition-all p-0"
+                  className="pb-4 text-xs font-extrabold uppercase tracking-widest rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary transition-all p-0"
                 >
                   Reviews ({product.reviewCount})
                 </TabsTrigger>
@@ -99,13 +99,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <TabsContent value="description" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="grid md:grid-cols-3 gap-12">
                   <div className="md:col-span-2 prose prose-lg prose-gray">
-                    <h3 className="text-2xl font-black uppercase tracking-tight text-gray-950 mb-6">Product Overview</h3>
+                    <h3 className="text-2xl font-extrabold uppercase tracking-tight text-gray-950 mb-6">Product Overview</h3>
                     <p className="text-lg leading-relaxed text-gray-600 font-medium">{product.description}</p>
                   </div>
                   
                   {product.features.length > 0 && (
                     <div className="md:col-span-1 space-y-6">
-                      <h4 className="text-sm font-black uppercase tracking-widest text-gray-950">Key Features</h4>
+                      <h4 className="text-sm font-extrabold uppercase tracking-widest text-gray-950">Key Features</h4>
                       <ul className="space-y-4">
                         {product.features.map((feature, i) => (
                           <li key={i} className="flex items-start gap-4">
@@ -124,7 +124,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <div className="grid sm:grid-cols-2 gap-8 ring-1 ring-gray-100 p-8 rounded-3xl bg-gray-50/30">
                     {product.specifications.map((spec) => (
                       <div key={spec.key} className="flex flex-col gap-2 group">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-primary transition-colors">{spec.key}</span>
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 group-hover:text-primary transition-colors">{spec.key}</span>
                         <span className="text-sm font-bold text-gray-950">{spec.value}</span>
                       </div>
                     ))}
@@ -138,7 +138,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
               <TabsContent value="reviews" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="text-center py-24 bg-gray-50 rounded-3xl border border-dashed flex flex-col items-center gap-4">
-                  <h3 className="text-lg font-black uppercase text-gray-950">Customer Voice</h3>
+                  <h3 className="text-lg font-extrabold uppercase text-gray-950">Customer Voice</h3>
                   <p className="max-w-xs text-xs font-bold text-gray-400">Our review portal is being upgraded to serve you better. Check back soon.</p>
                 </div>
               </TabsContent>
@@ -153,10 +153,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
             <section className="pb-24">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
                 <div className="space-y-2">
-                  <h2 className="text-3xl font-black uppercase tracking-tighter text-gray-950">
+                  <h2 className="text-3xl font-extrabold uppercase tracking-tighter text-gray-950">
                     Discover More
                   </h2>
-                  <p className="text-xs font-black uppercase tracking-widest text-[#E63946]/50">Recommended picks from {product.category as string}</p>
+                  <p className="text-xs font-extrabold uppercase tracking-widest text-[#E63946]/50">Recommended picks from {product.category as string}</p>
                 </div>
               </div>
               <ProductGrid products={relatedProducts} columns={4} />

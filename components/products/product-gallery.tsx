@@ -87,7 +87,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
             
             {/* Index Badge */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/50 shadow-sm">
-              <span className="text-[10px] font-black tracking-widest text-gray-500 uppercase">
+              <span className="text-[10px] font-extrabold tracking-widest text-gray-500 uppercase">
                 {selectedIndex + 1} <span className="text-gray-300 mx-1">/</span> {images.length}
               </span>
             </div>

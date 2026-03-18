@@ -59,7 +59,7 @@ export function HeroSection() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/20" />
           <div className="absolute inset-x-0 top-10 px-6 text-center z-10">
             <h2 className="text-white/90 text-xl font-bold tracking-[0.2em] ml-1">ANTIGRAVITY</h2>
-            <p className="text-[#FF4A00] text-4xl font-black mt-2">Λ1</p>
+            <p className="text-[#FF4A00] text-4xl font-extrabold mt-2">Λ1</p>
             <p className="text-white/90 text-[11px] tracking-[0.3em] font-medium mt-2 ml-1">8K 360 DRONE</p>
           </div>
         </Link>
@@ -101,7 +101,7 @@ export function HeroSection() {
                 <span className="text-xl"></span> iPhone 17
               </span>
             </div>
-            <h2 className="bg-gradient-to-br from-[#FFD1A9] via-[#FF9F43] to-[#B35D01] text-transparent bg-clip-text text-[70px] md:text-[90px] leading-[0.85] font-black uppercase tracking-tighter mb-8">
+            <h2 className="bg-gradient-to-br from-[#FFD1A9] via-[#FF9F43] to-[#B35D01] text-transparent bg-clip-text text-[70px] md:text-[90px] leading-[0.85] font-extrabold uppercase tracking-tighter mb-8">
               PRO
             </h2>
 

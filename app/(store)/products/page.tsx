@@ -25,6 +25,8 @@ interface ProductsPageProps {
     brands?: string;
     minPrice?: string;
     maxPrice?: string;
+    colors?: string;
+    discount?: string;
     search?: string;
   }>;
 }
@@ -41,66 +43,63 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     brand: params.brands,
     minPrice: params.minPrice ? parseInt(params.minPrice) : undefined,
     maxPrice: params.maxPrice ? parseInt(params.maxPrice) : undefined,
+    colors: params.colors,
+    discount: params.discount,
     search: params.search,
   };
 
   const { data: products, pagination } = await ProductService.getProducts(filters);
 
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Breadcrumb */}
-      <Breadcrumb
-        items={[
-          { label: 'Products', href: '/products' },
-          ...(params.category ? [{ label: CATEGORIES.find(c => c.slug === params.category)?.name || params.category }] : [])
-        ]}
-        className="mb-12"
-      />
-
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row items-end justify-between gap-8 mb-16">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-950 mb-6 uppercase">
-            {params.category 
-              ? (CATEGORIES.find(c => c.slug === params.category)?.name || params.category)
-              : params.search 
-                ? `Search: "${params.search}"`
-                : 'Our Collection'}
-          </h1>
-          <p className="text-xl text-gray-500 font-medium leading-relaxed">
-            Explore our curated selection of {pagination.total} high-performance electronics and premium gadgets.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-4 w-full md:w-auto">
-          {/* Mobile Filter Button */}
-          <div className="lg:hidden flex-1">
-            <Suspense fallback={null}>
-              <ProductFilters category={params.category} isMobileTrigger />
-            </Suspense>
-          </div>
-          
-          <div className="flex-1 md:flex-initial min-w-[160px]">
-            <SortSelector currentSort={sort} />
-          </div>
-        </div>
+    <div className="container mx-auto px-4 py-2">
+      {/* Centered Page Header */}
+      <div className="text-center pt-6 pb-2 mb-2">
+        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-950 uppercase">
+          {params.category 
+            ? (CATEGORIES.find(c => c.slug === params.category)?.name || params.category)
+            : params.search 
+              ? `Search: "${params.search}"`
+              : 'Our Collection'}
+        </h1>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Desktop Filters Sidebar */}
-        <div className="hidden lg:block w-72 shrink-0">
-          <div className="sticky top-28 space-y-8">
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 border-b border-gray-100 pb-4">
-              Refine Search
+        <aside className="hidden lg:block w-72 shrink-0">
+          <div className="sticky top-32 space-y-10">
+            <h2 className="text-[15px] font-extrabold uppercase tracking-[0.15em] text-gray-950 border-b border-gray-100 pb-4">
+              Filter By:
             </h2>
             <Suspense fallback={null}>
               <ProductFilters category={params.category} />
             </Suspense>
           </div>
-        </div>
+        </aside>
 
         {/* Gallery Content */}
         <div className="flex-1 min-w-0">
+          {/* Results Bar */}
+          <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-50/50">
+            <p className="text-sm font-bold text-gray-950">
+              Showing {products.length} {products.length === 1 ? 'results' : 'results'}
+            </p>
+            
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">Sort By</span>
+                <SortSelector currentSort={sort} />
+              </div>
+
+              {/* Mobile Filter Button - only visible on mobile */}
+              <div className="lg:hidden">
+                <Suspense fallback={null}>
+                  <ProductFilters category={params.category} isMobileTrigger />
+                </Suspense>
+              </div>
+            </div>
+          </div>
+
           <Suspense fallback={<ProductGridSkeleton count={8} />}>
             {products.length > 0 ? (
               <ProductGrid products={products} columns={3} />
@@ -112,7 +111,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-black text-gray-950 tracking-tight">No products found</h3>
+                  <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight">No products found</h3>
                   <p className="text-gray-500 font-medium leading-relaxed">Try adjusting your filters or search terms to find what you're looking for.</p>
                   <Button asChild variant="outline" className="rounded-xl h-12 px-8">
                     <a href="/products">View All Products</a>

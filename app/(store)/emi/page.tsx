@@ -23,7 +23,7 @@ export default function EMIPage() {
         <div className="text-center mb-20 text-white bg-primary p-12 md:p-24 rounded-[60px] shadow-2xl overflow-hidden relative">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white opacity-5 -translate-y-1/2 translate-x-1/2 rounded-full z-0" />
           <div className="relative z-10">
-            <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 leading-tight">
+            <h1 className="text-4xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-tight">
               Get It Now. <br/> Pay <span className="text-white/60 italic underline decoration-white/40 decoration-4">Monthly.</span>
             </h1>
             <p className="text-xl md:text-2xl text-white/80 font-medium max-w-lg mx-auto leading-relaxed">
@@ -49,17 +49,17 @@ export default function EMIPage() {
               <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mb-10 group-hover:scale-110 transition-all">
                 <item.icon className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-2xl font-black text-gray-950 tracking-tight mb-4">{item.title}</h3>
+              <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight mb-4">{item.title}</h3>
               <p className="text-gray-500 font-medium leading-relaxed">{item.text}</p>
             </div>
           ))}
         </div>
 
         <div className="bg-gray-50 p-12 rounded-[50px] border border-gray-100 mb-20">
-          <h2 className="text-3xl font-black text-gray-950 tracking-tight mb-10">Partnered Banks</h2>
+          <h2 className="text-3xl font-extrabold text-gray-950 tracking-tight mb-10">Partnered Banks</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-70">
             {['Nabil Bank', 'NIC Asia', 'Everest Bank', 'Sanima Bank'].map((bank) => (
-              <div key={bank} className="h-20 bg-white border border-gray-200 rounded-2xl flex items-center justify-center font-black text-gray-400 text-sm italic tracking-widest text-center px-4">
+              <div key={bank} className="h-20 bg-white border border-gray-200 rounded-2xl flex items-center justify-center font-extrabold text-gray-400 text-sm italic tracking-widest text-center px-4">
                 {bank} Logo Placeholder
               </div>
             ))}
@@ -67,7 +67,7 @@ export default function EMIPage() {
         </div>
 
         <div className="p-12 bg-white rounded-[50px] shadow-2xl shadow-primary/5 border border-gray-100 mb-20">
-          <h3 className="text-2xl font-black text-gray-950 tracking-tight mb-8">What You Need to Apply</h3>
+          <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight mb-8">What You Need to Apply</h3>
           <div className="grid md:grid-cols-2 gap-8">
             {[
               'Valid Citizenship ID or Passport',

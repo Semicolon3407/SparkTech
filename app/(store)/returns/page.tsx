@@ -20,11 +20,11 @@ export default function ReturnsPage() {
       />
 
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-20">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-gray-950 mb-6">
-            Hassle-Free <span className="text-primary">Returns</span>
+        <div className="mb-12 mt-4 max-w-2xl">
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-950 mb-4 uppercase">
+            Hassle-Free Returns
           </h1>
-          <p className="text-xl text-gray-500 font-medium leading-relaxed max-w-2xl mx-auto">
+          <p className="text-base text-gray-500 leading-relaxed font-medium">
             Not happy with your purchase? We make it easy to return or exchange products within our policy guidelines.
           </p>
         </div>
@@ -39,14 +39,14 @@ export default function ReturnsPage() {
               <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-6">
                 <item.icon className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-lg font-black text-gray-950 tracking-tight mb-3">{item.title}</h3>
+              <h3 className="text-lg font-extrabold text-gray-950 tracking-tight mb-3">{item.title}</h3>
               <p className="text-sm text-gray-500 font-medium leading-relaxed">{item.text}</p>
             </div>
           ))}
         </div>
 
         <div className="bg-white p-12 rounded-[50px] shadow-2xl shadow-primary/5 border border-gray-100 mb-20">
-          <h2 className="text-3xl font-black text-gray-950 tracking-tight mb-8">Return Conditions</h2>
+          <h2 className="text-3xl font-extrabold text-gray-950 tracking-tight mb-8">Return Conditions</h2>
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
@@ -71,11 +71,11 @@ export default function ReturnsPage() {
 
         <div className="bg-primary p-12 rounded-[50px] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="text-white space-y-2">
-            <h3 className="text-2xl font-black tracking-tight">Need to start a return?</h3>
+            <h3 className="text-2xl font-extrabold tracking-tight">Need to start a return?</h3>
             <p className="text-white/80 font-medium">Contact our support team or visit any of our stores.</p>
           </div>
           <div className="flex gap-4">
-            <a href="/contact" className="px-8 py-4 bg-white text-primary rounded-2xl font-black tracking-tight hover:scale-105 transition-all inline-flex items-center gap-2">
+            <a href="/contact" className="px-8 py-4 bg-white text-primary rounded-2xl font-extrabold tracking-tight hover:scale-105 transition-all inline-flex items-center gap-2">
               Start Return <ArrowRight className="h-5 w-5" />
             </a>
           </div>

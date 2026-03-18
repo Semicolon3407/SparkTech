@@ -23,7 +23,7 @@ export default function ServicesPage() {
         <div className="text-center mb-20 text-white bg-slate-900 p-12 md:p-24 rounded-[60px] shadow-2xl overflow-hidden relative">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-400 opacity-20 -translate-y-1/2 translate-x-1/2 rounded-full z-0" />
           <div className="relative z-10">
-            <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 leading-tight">
+            <h1 className="text-4xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-tight">
               Expert <br/> <span className="text-sky-400 italic underline decoration-sky-400/40 decoration-4">Repairs</span>.
             </h1>
             <p className="text-xl md:text-2xl text-white/60 font-medium max-w-lg mx-auto leading-relaxed">
@@ -43,7 +43,7 @@ export default function ServicesPage() {
               <div className={`w-14 h-14 ${service.color} rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-${service.color.split('-')[1]}-500/20 text-white`}>
                 <service.icon className="h-7 w-7" />
               </div>
-              <h3 className="text-sm font-black text-gray-950 uppercase tracking-widest">{service.title}</h3>
+              <h3 className="text-sm font-extrabold text-gray-950 uppercase tracking-widest">{service.title}</h3>
             </div>
           ))}
         </div>
@@ -54,7 +54,7 @@ export default function ServicesPage() {
               <MousePointer2 className="h-8 w-8" />
             </div>
             <div className="space-y-4">
-              <h3 className="text-2xl font-black text-gray-950 tracking-tight">On-Site Servicing</h3>
+              <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight">On-Site Servicing</h3>
               <p className="text-gray-500 font-medium leading-relaxed">
                 Simple repairs like screen protectors and battery replacements can be done while you wait at our experience centers inside Civil Mall and Labim Mall.
               </p>
@@ -65,7 +65,7 @@ export default function ServicesPage() {
               <HelpCircle className="h-8 w-8" />
             </div>
             <div className="space-y-4">
-              <h3 className="text-2xl font-black text-gray-950 tracking-tight">Technical Diagnostics</h3>
+              <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight">Technical Diagnostics</h3>
               <p className="text-gray-500 font-medium leading-relaxed">
                 Experience mystery glitches or performance issues? Bring your device for a free diagnosis by our certified tech engineers.
               </p>
@@ -75,10 +75,10 @@ export default function ServicesPage() {
 
         <div className="p-12 bg-white rounded-[50px] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 border border-gray-100">
           <div className="space-y-2 text-center md:text-left">
-            <h3 className="text-2xl font-black text-gray-950 tracking-tight">Need a repair?</h3>
+            <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight">Need a repair?</h3>
             <p className="text-gray-500 font-medium">Book your slot or find a nearby service center.</p>
           </div>
-          <a href="/contact" className="px-10 py-5 bg-black text-white rounded-2xl font-black tracking-tight hover:scale-105 transition-all inline-flex items-center gap-2">
+          <a href="/contact" className="px-10 py-5 bg-black text-white rounded-2xl font-extrabold tracking-tight hover:scale-105 transition-all inline-flex items-center gap-2">
             Schedule Repair <ArrowRight className="h-6 w-6" />
           </a>
         </div>

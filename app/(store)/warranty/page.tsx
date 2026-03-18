@@ -23,7 +23,7 @@ export default function WarrantyPage() {
         <div className="text-center mb-20 text-white bg-gray-950 p-12 md:p-24 rounded-[60px] shadow-2xl overflow-hidden relative">
           <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary opacity-20 -translate-y-1/2 -translate-x-1/2 rounded-full z-0" />
           <div className="relative z-10">
-            <h1 className="text-4xl md:text-7xl font-black tracking-tighter mb-6 leading-tight">
+            <h1 className="text-4xl md:text-7xl font-extrabold tracking-tighter mb-6 leading-tight">
               Premium <br/> <span className="text-primary italic underline decoration-primary/40 decoration-4">Protection</span>.
             </h1>
             <p className="text-xl md:text-2xl text-white/60 font-medium max-w-lg mx-auto leading-relaxed">
@@ -57,14 +57,14 @@ export default function WarrantyPage() {
               <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-primary/5 transition-all text-primary">
                 <item.icon className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-black text-gray-950 tracking-tight mb-4">{item.title}</h3>
+              <h3 className="text-xl font-extrabold text-gray-950 tracking-tight mb-4">{item.title}</h3>
               <p className="text-sm text-gray-500 font-medium leading-relaxed">{item.text}</p>
             </div>
           ))}
         </div>
 
         <div className="p-12 bg-gray-50 rounded-[50px] border border-gray-100 mb-20">
-          <h3 className="text-2xl font-black text-gray-950 tracking-tight mb-10">Why Choose Our Protection Plans?</h3>
+          <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight mb-10">Why Choose Our Protection Plans?</h3>
           <div className="grid md:grid-cols-2 gap-10">
             {[
               { title: 'Authorized Center', text: 'All repairs are performed by authorized service providers using genuine parts.' },
@@ -77,7 +77,7 @@ export default function WarrantyPage() {
                   <CheckCircle className="h-6 w-6" />
                 </div>
                 <div>
-                  <div className="text-[15px] font-black text-gray-950 mb-1">{item.title}</div>
+                  <div className="text-[15px] font-extrabold text-gray-950 mb-1">{item.title}</div>
                   <div className="text-sm font-medium text-gray-500 leading-relaxed">{item.text}</div>
                 </div>
               </div>
@@ -87,10 +87,10 @@ export default function WarrantyPage() {
 
         <div className="p-12 bg-white rounded-[50px] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 border border-gray-100">
           <div className="space-y-2">
-            <h3 className="text-2xl font-black text-gray-950 tracking-tight">Got a new device?</h3>
+            <h3 className="text-2xl font-extrabold text-gray-950 tracking-tight">Got a new device?</h3>
             <p className="text-gray-500 font-medium leading-relaxed">Protect it today with our premium plans.</p>
           </div>
-          <a href="/contact" className="px-10 py-5 bg-primary text-white rounded-2xl font-black tracking-tight hover:scale-105 transition-all inline-flex items-center gap-2 shadow-xl shadow-primary/20">
+          <a href="/contact" className="px-10 py-5 bg-primary text-white rounded-2xl font-extrabold tracking-tight hover:scale-105 transition-all inline-flex items-center gap-2 shadow-xl shadow-primary/20">
             Contact Support <ArrowRight className="h-6 w-6" />
           </a>
         </div>

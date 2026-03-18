@@ -41,17 +41,17 @@ function PromoCard({
       </div>
       
       {/* Top Right Badge */}
-      <div className={`absolute top-6 right-6 flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#E63946] text-white text-[13px] font-black uppercase tracking-[0.05em] shadow-[0_8px_20px_rgba(230,57,70,0.4)] transform ${rotateBadge} transition-transform duration-500 group-hover:scale-110`}>
+      <div className={`absolute top-6 right-6 flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#E63946] text-white text-[13px] font-extrabold uppercase tracking-[0.05em] shadow-[0_8px_20px_rgba(230,57,70,0.4)] transform ${rotateBadge} transition-transform duration-500 group-hover:scale-110`}>
         {badgeContent}
         {BadgeIcon && <BadgeIcon className="w-4 h-4" />}
       </div>
 
       {/* Content */}
       <div className="absolute bottom-10 left-10 right-10">
-        <h3 className="text-white text-2xl md:text-3xl font-black mb-6 leading-tight tracking-tight">{title}</h3>
+        <h3 className="text-white text-2xl md:text-3xl font-extrabold mb-6 leading-tight tracking-tight">{title}</h3>
         <Link
           href={href}
-          className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-[#E63946] hover:bg-[#D62839] text-white font-black text-sm uppercase tracking-wider transition-all duration-300 shadow-xl hover:shadow-[#E63946]/30 group/btn active:scale-95"
+          className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-[#E63946] hover:bg-[#D62839] text-white font-extrabold text-sm uppercase tracking-wider transition-all duration-300 shadow-xl hover:shadow-[#E63946]/30 group/btn active:scale-95"
         >
           {buttonText}
           <Tag className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />
@@ -74,11 +74,11 @@ export function PromoSection() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#E63946]/10 text-[#E63946] text-[13px] font-black uppercase tracking-[0.1em] mb-6 border border-[#E63946]/20">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#E63946]/10 text-[#E63946] text-[13px] font-extrabold uppercase tracking-[0.1em] mb-6 border border-[#E63946]/20">
             <Tag className="w-4 h-4" />
             Exclusive Offers
           </div>
-          <h2 className="text-5xl md:text-7xl font-black text-gray-950 mb-6 tracking-tighter leading-[0.9]">
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-950 mb-6">
             Don't Miss Out
           </h2>
           <p className="text-gray-500 text-lg md:text-xl font-medium tracking-tight">

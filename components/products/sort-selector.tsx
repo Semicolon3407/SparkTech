@@ -19,11 +19,11 @@ export function SortSelector({ currentSort }: SortSelectorProps) {
   };
 
   return (
-    <div className="relative inline-block w-full sm:w-[200px]">
+    <div className="relative inline-block w-[180px]">
       <select 
         value={currentSort}
         onChange={(e) => handleSortChange(e.target.value)}
-        className="w-full h-11 px-4 py-2 appearance-none bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-950 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all pr-10 hover:border-gray-300 shadow-sm"
+        className="w-full h-11 px-4 py-2 appearance-none bg-white border border-gray-200 rounded-md text-[13px] font-bold text-gray-950 focus:outline-none focus:border-gray-950 transition-all pr-10 hover:border-gray-300"
       >
         <option value="newest">Newest First</option>
         <option value="price-asc">Price: Low to High</option>
