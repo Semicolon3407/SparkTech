@@ -53,14 +53,26 @@ export interface Specification {
 
 // Category Types
 export interface Category {
-  _id: string;
+  _id?: string;
   name: string;
   slug: string;
   description?: string;
   image?: string;
   parentId?: string | null;
-  isActive: boolean;
+  isActive?: boolean;
+  hasDropdown?: boolean;
+  highlight?: boolean;
+  items?: CategoryMenuSection[];
 }
+
+export interface CategoryMenuSection {
+  title: string;
+  links: {
+    label: string;
+    href: string;
+  }[];
+}
+
 
 // Cart Types
 export interface CartItem {
@@ -171,6 +183,7 @@ export interface ProductFilters {
   category?: string;
   subcategory?: string;
   brand?: string;
+  isFeatured?: boolean;
   minPrice?: number;
   maxPrice?: number;
   rating?: number;
@@ -180,6 +193,7 @@ export interface ProductFilters {
   page?: number;
   limit?: number;
 }
+
 
 // Dashboard Stats Types
 export interface DashboardStats {

@@ -12,18 +12,35 @@ import {
   Youtube,
   Facebook,
   Linkedin,
-  Phone,
+  Heart,
   Menu,
+
   X,
   Plus,
   Minus,
+  User as UserIcon,
 } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Logo } from '@/components/shared/logo';
+
 import { useCart } from '@/contexts/cart-context';
 import { CATEGORIES, APP_NAME } from '@/lib/constants';
 import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/components/ui/sheet';
-import { Logo } from '@/components/shared/logo';
+import { useWishlist } from '@/contexts/wishlist-context';
+import { useAuth } from '@/contexts/auth-context';
+import { Category, CategoryMenuSection } from '@/types';
+
+
+
+
 
 
 // Custom icons for TikTok and X
@@ -42,6 +59,10 @@ const XIcon = () => (
 export function Header() {
   const router = useRouter();
   const { itemCount } = useCart();
+  const { wishlistIds } = useWishlist();
+  const { user, isAuthenticated } = useAuth();
+
+
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -79,8 +100,9 @@ export function Header() {
             <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 overflow-y-auto">
               <SheetHeader className="p-6 border-b text-left">
                 <SheetTitle>
-                  <Logo showText={true} className="mt-2" />
+                  <Logo className="mt-2" />
                 </SheetTitle>
+
 
               </SheetHeader>
               <MobileNav onClose={() => setMobileMenuOpen(false)} />
@@ -110,16 +132,27 @@ export function Header() {
 
           {/* Action Icons */}
           <div className="flex items-center gap-3 md:gap-6 shrink-0">
-            <a href="tel:+977" className="hidden sm:flex text-gray-950 hover:text-primary transition-colors items-center gap-1">
-              <Phone className="h-6 w-6 stroke-[1.5px]" />
-            </a>
+            <Link href="/wishlist" className="relative group">
+              <Heart className="h-6 w-6 md:h-7 md:w-7 stroke-[1.5px] text-gray-950 group-hover:text-primary transition-colors" />
+              {wishlistIds.length > 0 && (
+                <span className="absolute -top-1 -right-1 md:-top-1.5 md:-right-1.5 h-4 w-4 md:h-5 md:w-5 rounded-full bg-primary text-white text-[8px] md:text-[10px] font-black flex items-center justify-center shadow-lg border-2 border-white">
+                  {wishlistIds.length}
+                </span>
+              )}
+            </Link>
+
             <Link href="/cart" className="relative group">
               <ShoppingCart className="h-6 w-6 md:h-7 md:w-7 stroke-[1.5px] text-gray-950 group-hover:text-primary transition-colors" />
               <span className="absolute -top-1 -right-1 md:-top-1.5 md:-right-1.5 h-4 w-4 md:h-5 md:w-5 rounded-full bg-primary text-white text-[8px] md:text-[10px] font-black flex items-center justify-center shadow-lg border-2 border-white">
                 {itemCount}
               </span>
             </Link>
+
+            <Link href={isAuthenticated ? "/account" : "/login"} className="group">
+              <UserIcon className="h-6 w-6 md:h-7 md:w-7 stroke-[1.5px] text-gray-950 group-hover:text-primary transition-colors" />
+            </Link>
           </div>
+
         </div>
       </div>
 
@@ -181,19 +214,33 @@ export function Header() {
 }
 
 function MobileNav({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   return (
     <div className="pb-10">
       <div className="p-4 bg-gray-50">
-        <div className="relative group">
+        <form 
+          className="relative group"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const input = (e.currentTarget.elements.namedItem('q') as HTMLInputElement);
+            if (input && input.value) {
+              onClose();
+              router.push(`/search?q=${input.value}`);
+            }
+          }}
+        >
           <input
+            name="q"
             type="text"
             placeholder="Search products..."
-            className="w-full h-10 px-4 pr-10 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+            className="w-full h-12 px-4 pr-10 rounded-2xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-[15px] font-medium"
           />
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-        </div>
+          <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center text-gray-400">
+            <Search className="h-5 w-5" />
+          </button>
+        </form>
       </div>
 
       <nav className="flex flex-col">
@@ -222,11 +269,13 @@ function MobileNav({ onClose }: { onClose: () => void }) {
 
             {expandedCategory === category.slug && (category as any).items && (
               <div className="bg-gray-50 px-6 py-4 animate-in slide-in-from-top-2 duration-200">
-                {(category as any).items.map((column: any) => (
+                {(category as any).items.map((column: CategoryMenuSection) => (
+
+
                   <div key={column.title} className="mb-6 last:mb-0">
                     <h4 className="text-[13px] font-black uppercase tracking-widest text-gray-400 mb-3">{column.title}</h4>
                     <ul className="flex flex-col gap-3">
-                      {column.links.map((link: any) => (
+                      {column.links.map((link) => (
                         <li key={link.label}>
                           <Link
                             href={link.href}
@@ -244,9 +293,10 @@ function MobileNav({ onClose }: { onClose: () => void }) {
             )}
           </div>
         ))}
-        
+
         {/* Additional Links */}
         <div className="p-6 space-y-4">
+          <Link href="/wishlist" onClick={onClose} className="block text-sm font-bold text-gray-500 hover:text-primary">Wishlist</Link>
           <Link href="/locations" onClick={onClose} className="block text-sm font-bold text-gray-500 hover:text-primary">Our Locations</Link>
           <Link href="/about" onClick={onClose} className="block text-sm font-bold text-gray-500 hover:text-primary">About Us</Link>
           <Link href="/contact" onClick={onClose} className="block text-sm font-bold text-gray-500 hover:text-primary">Contact</Link>
@@ -255,3 +305,4 @@ function MobileNav({ onClose }: { onClose: () => void }) {
     </div>
   );
 }
+

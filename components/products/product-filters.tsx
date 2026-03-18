@@ -16,11 +16,12 @@ import { cn } from '@/lib/utils';
 
 interface ProductFiltersProps {
   category?: string;
+  isMobileTrigger?: boolean;
 }
 
 const allBrands = [...new Set([...BRANDS.mobile, ...BRANDS.laptop, ...BRANDS.audio])];
 
-export function ProductFilters({ category }: ProductFiltersProps) {
+export function ProductFilters({ category, isMobileTrigger = false }: ProductFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -80,22 +81,22 @@ export function ProductFilters({ category }: ProductFiltersProps) {
   const hasActiveFilters = currentBrands.length > 0 || currentMinPrice > 0 || currentMaxPrice < 500000 || inStock;
 
   const FilterContent = () => (
-    <div className="space-y-6">
+    <div className="space-y-10">
       {/* Categories */}
       {!category && (
         <Collapsible defaultOpen>
-          <CollapsibleTrigger className="flex items-center justify-between w-full py-2 font-semibold">
-            Categories
-            <ChevronDown className="h-4 w-4" />
+          <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
+            <span className="text-sm font-black uppercase tracking-widest text-gray-950 group-hover:text-primary transition-colors">Categories</span>
+            <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-primary transition-colors" />
           </CollapsibleTrigger>
-          <CollapsibleContent className="pt-2 space-y-2">
+          <CollapsibleContent className="pt-4 space-y-3">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.slug}
                 onClick={() => updateFilters('category', cat.slug)}
                 className={cn(
-                  'block w-full text-left py-1 text-sm hover:text-primary transition-colors',
-                  searchParams.get('category') === cat.slug && 'text-primary font-medium'
+                  'block w-full text-left text-[15px] font-bold transition-all hover:translate-x-1',
+                  searchParams.get('category') === cat.slug ? 'text-primary' : 'text-gray-500 hover:text-gray-950'
                 )}
               >
                 {cat.name}
@@ -105,113 +106,110 @@ export function ProductFilters({ category }: ProductFiltersProps) {
         </Collapsible>
       )}
 
-      <Separator />
-
       {/* Price Range */}
       <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex items-center justify-between w-full py-2 font-semibold">
-          Price Range
-          <ChevronDown className="h-4 w-4" />
+        <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
+          <span className="text-sm font-black uppercase tracking-widest text-gray-950">Price Range</span>
+          <ChevronDown className="h-4 w-4 text-gray-400" />
         </CollapsibleTrigger>
-        <CollapsibleContent className="pt-4 space-y-4">
+        <CollapsibleContent className="pt-6 space-y-6">
           <Slider
             value={priceRange}
             onValueChange={setPriceRange}
             min={0}
             max={500000}
-            step={1000}
+            step={100}
             className="w-full"
           />
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-between text-sm font-black text-gray-950">
             <span>{formatPrice(priceRange[0])}</span>
             <span>{formatPrice(priceRange[1])}</span>
           </div>
-          <Button size="sm" onClick={applyPriceRange} className="w-full">
+          <Button size="sm" onClick={applyPriceRange} className="w-full h-11 rounded-xl shadow-lg border-none">
             Apply Price
           </Button>
         </CollapsibleContent>
       </Collapsible>
 
-      <Separator />
-
       {/* Brands */}
       <Collapsible defaultOpen>
-        <CollapsibleTrigger className="flex items-center justify-between w-full py-2 font-semibold">
-          Brands
-          <ChevronDown className="h-4 w-4" />
+        <CollapsibleTrigger className="flex items-center justify-between w-full py-2 group">
+          <span className="text-sm font-black uppercase tracking-widest text-gray-950">Brands</span>
+          <ChevronDown className="h-4 w-4 text-gray-400" />
         </CollapsibleTrigger>
-        <CollapsibleContent className="pt-2 space-y-2">
-          {allBrands.map((brand) => (
-            <div key={brand} className="flex items-center gap-2">
-              <Checkbox
-                id={`brand-${brand}`}
-                checked={currentBrands.includes(brand)}
-                onCheckedChange={() => toggleBrand(brand)}
-              />
-              <Label htmlFor={`brand-${brand}`} className="text-sm cursor-pointer">
-                {brand}
-              </Label>
-            </div>
-          ))}
+        <CollapsibleContent className="pt-4 space-y-3">
+          <div className="grid gap-2">
+            {allBrands.map((brand) => (
+              <div key={brand} className="flex items-center gap-3">
+                <Checkbox
+                  id={`brand-${brand}`}
+                  checked={currentBrands.includes(brand)}
+                  onCheckedChange={() => toggleBrand(brand)}
+                  className="rounded-md border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                />
+                <Label htmlFor={`brand-${brand}`} className="text-[15px] font-bold text-gray-600 cursor-pointer hover:text-gray-950 transition-colors">
+                  {brand}
+                </Label>
+              </div>
+            ))}
+          </div>
         </CollapsibleContent>
       </Collapsible>
 
-      <Separator />
-
       {/* Availability */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3 py-2 border-t border-gray-100 mt-6 pt-6">
         <Checkbox
           id="in-stock"
           checked={inStock}
           onCheckedChange={(checked) => updateFilters('inStock', checked ? 'true' : null)}
+          className="rounded-md border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
         />
-        <Label htmlFor="in-stock" className="text-sm cursor-pointer">
+        <Label htmlFor="in-stock" className="text-[15px] font-bold text-gray-950 cursor-pointer">
           In Stock Only
         </Label>
       </div>
 
       {/* Clear Filters */}
       {hasActiveFilters && (
-        <Button variant="outline" size="sm" onClick={clearAllFilters} className="w-full">
-          <X className="h-4 w-4 mr-2" />
+        <Button variant="ghost" size="sm" onClick={clearAllFilters} className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 font-black uppercase tracking-widest text-[10px] mt-4">
+          <X className="h-3 w-3 mr-2" />
           Clear All Filters
         </Button>
       )}
     </div>
   );
 
-  return (
-    <>
-      {/* Mobile Filter Button */}
+  if (isMobileTrigger) {
+    return (
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" className="lg:hidden">
+          <Button variant="outline" className="w-full h-12 rounded-xl border-gray-200 font-bold bg-white shadow-sm hover:bg-gray-50 text-gray-950">
             <SlidersHorizontal className="h-4 w-4 mr-2" />
-            Filters
+            Refine
             {hasActiveFilters && (
-              <span className="ml-2 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+              <span className="ml-2 h-5 w-5 rounded-full bg-primary text-white text-[10px] flex items-center justify-center font-black">
                 !
               </span>
             )}
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-[300px]">
-          <SheetHeader>
-            <SheetTitle>Filters</SheetTitle>
+        <SheetContent side="left" className="w-[320px] p-0 border-r-0 rounded-r-[32px] overflow-hidden">
+          <SheetHeader className="p-6 border-b border-gray-100 bg-gray-50/50">
+            <SheetTitle className="text-xl font-black uppercase tracking-tight">Refine Results</SheetTitle>
           </SheetHeader>
-          <div className="mt-6">
+          <div className="p-6 h-full overflow-y-auto pb-20">
             <FilterContent />
           </div>
         </SheetContent>
       </Sheet>
+    );
+  }
 
-      {/* Desktop Filters */}
-      <aside className="hidden lg:block w-64 shrink-0">
-        <div className="sticky top-24 bg-card rounded-lg border p-4">
-          <h2 className="font-semibold mb-4">Filters</h2>
-          <FilterContent />
-        </div>
-      </aside>
-    </>
+  return (
+    <div className="space-y-8">
+      <FilterContent />
+    </div>
   );
 }
+
+

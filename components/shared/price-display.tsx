@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 interface PriceDisplayProps {
   price: number;
   comparePrice?: number;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   showDiscount?: boolean;
   className?: string;
 }
@@ -24,13 +24,16 @@ export function PriceDisplay({
     sm: 'text-sm',
     md: 'text-lg',
     lg: 'text-2xl',
+    xl: 'text-4xl md:text-5xl',
   };
 
   const compareSizeClasses = {
     sm: 'text-xs',
     md: 'text-sm',
     lg: 'text-base',
+    xl: 'text-xl',
   };
+
 
   return (
     <div className={cn('flex items-center gap-2 flex-wrap', className)}>

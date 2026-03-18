@@ -79,8 +79,9 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link href="/" className="flex justify-center mb-4">
-            <Logo showText={false} className="scale-125" />
+            <Logo className="scale-125" />
           </Link>
+
 
           <CardTitle className="text-2xl">Create Account</CardTitle>
           <CardDescription>

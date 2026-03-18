@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { APP_NAME } from "@/lib/constants";
+import { Logo } from "@/components/shared/logo";
+
 
 const adminLinks = [
   {
@@ -86,17 +88,9 @@ export function AdminSidebar() {
         {/* Logo */}
         <div className="flex h-16 items-center justify-between px-4 border-b border-border">
           <Link href="/admin" className="flex items-center gap-3">
-            <Image
-              src="/images/logo.png"
-              alt={APP_NAME}
-              width={32}
-              height={32}
-              className="h-8 w-8"
-            />
-            {!collapsed && (
-              <span className="font-bold text-lg">{APP_NAME}</span>
-            )}
+            <Logo className={cn("h-8 w-auto", collapsed && "h-6")} />
           </Link>
+
           <Button
             variant="ghost"
             size="icon"

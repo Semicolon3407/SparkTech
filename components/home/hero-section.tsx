@@ -49,7 +49,7 @@ export function HeroSection() {
         </Link>
 
         {/* Antigravity Drone */}
-        <Link href="/products/drone" className="relative group overflow-hidden rounded-2xl md:col-span-1 border border-border">
+        <Link href="/products/antigravity-drone" className="relative group overflow-hidden rounded-2xl md:col-span-1 border border-border">
           <Image
             src="/images/drone.png"
             alt="Drone"
@@ -81,7 +81,8 @@ export function HeroSection() {
         </Link>
 
         {/* iPhone 17 Pro */}
-        <Link href="/products/iphone" className="relative group overflow-hidden rounded-2xl md:col-span-2 md:row-span-1 bg-black border border-border flex items-center justify-center md:justify-end p-8 md:p-12">
+        <Link href="/products/iphone-15-pro-max-256gb" className="relative group overflow-hidden rounded-2xl md:col-span-2 md:row-span-1 bg-black border border-border flex items-center justify-center md:justify-end p-8 md:p-12">
+
           {/* Background image covering left side, fading out to right */}
           <div className="absolute inset-0 w-full md:w-[65%] z-0">
             <Image

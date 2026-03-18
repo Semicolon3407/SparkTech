@@ -34,9 +34,10 @@ export function HomeTheatreSection() {
             Experience cinema-level audio in the comfort of your home. Our curated collection of high-performance speakers, subwoofers, and amplifiers delivers rich, immersive sound engineered for home theatre perfection. Build the ultimate movie, music, and gaming setup with professional-grade audio made simple.
           </p>
           <Link
-            href="/collections/home-theatre"
+            href="/category/home-theatre"
             className="inline-flex items-center gap-2 px-8 py-4 bg-[#E63946] hover:bg-[#D62839] text-white font-bold rounded-md transition-all duration-300 active:scale-95"
           >
+
             Explore More
           </Link>
         </div>
@@ -113,16 +114,16 @@ export function DroneShowcaseSection() {
 }
 
 const categories = [
-  { name: 'Phones', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400', href: '/category/phones' },
-  { name: 'iPad', image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400', href: '/category/ipad' },
-  { name: 'MacBook', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400', href: '/category/macbook' },
-  { name: 'Watches', image: 'https://images.unsplash.com/photo-1546868889-4e0c68a9d639?w=400', href: '/category/watches' },
-  { name: 'Speakers', image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400', href: '/category/speakers' },
-  { name: 'Projectors', image: 'https://images.unsplash.com/photo-1535016120720-40c646bebbdc?w=400', href: '/category/projectors' },
-  { name: 'EarBuds', image: 'https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=400', href: '/category/earbuds' },
-  { name: 'HeadPhones', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400', href: '/category/headphones' },
-  { name: 'Drones', image: 'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?w=400', href: '/category/drones' },
-  { name: 'Action Cameras', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400', href: '/category/action-cameras' },
+  { name: 'Apple', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400', href: '/category/apple' },
+  { name: 'Android', image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400', href: '/category/android' },
+  { name: 'Audio', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400', href: '/category/audio' },
+  { name: 'Laptops', image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400', href: '/category/laptops' },
+  { name: 'Cameras', image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400', href: '/category/video-photography' },
+  { name: 'Home Theatre', image: 'https://images.unsplash.com/photo-1535016120720-40c646bebbdc?w=400', href: '/category/home-theatre' },
+  { name: 'Lifestyle', image: 'https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?w=400', href: '/category/lifestyle' },
+  { name: 'Accessories', image: 'https://images.unsplash.com/photo-1621330396173-e41da1bafe7d?w=400', href: '/category/accessories' },
+  { name: 'On Sale', image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400', href: '/category/on-sale' },
+  { name: 'EV', image: 'https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?w=400', href: '/category/ev' },
 ];
 
 export function CategoryBrowseSection() {

@@ -41,69 +41,63 @@ export const CATEGORIES = [
     name: 'Apple',
     slug: 'apple',
     icon: Apple,
+    hasDropdown: true,
     items: [
+
       {
         title: 'iPhone',
         links: [
-          { label: 'iPhone 17', href: '/products/iphone-17' },
-          { label: 'iPhone Air', href: '/products/iphone-air' },
-          { label: 'iPhone 17 Pro | 17 Pro Max', href: '/products/iphone-17-pro' },
-          { label: 'iPhone 16e | 16 | 16 Plus', href: '/products/iphone-16' },
-          { label: 'iPhone 15 | 14 | 13', href: '/products/iphone-old' },
-          { label: 'iPhone Accessories', href: '/category/iphone-accessories' },
-          { label: 'Open Box Phones', href: '/category/open-box' },
+          { label: 'iPhone 17 Pro', href: '/category/mobile-phones?brand=Apple' },
+          { label: 'iPhone 16 Series', href: '/category/mobile-phones?brand=Apple' },
+          { label: 'iPhone 15 | 14 | 13', href: '/category/mobile-phones?brand=Apple' },
+          { label: 'iPhone Accessories', href: '/category/accessories?search=iphone' },
+          { label: 'Open Box Phones', href: '/category/mobile-phones?condition=open-box' },
         ]
       },
       {
         title: 'Mac',
         links: [
-          { label: 'Macbook', href: '/category/macbook' },
-          { label: 'Macbook Air', href: '/category/macbook-air' },
-          { label: 'MacBook Pro', href: '/category/macbook-pro' },
-          { label: 'iMac', href: '/category/imac' },
-          { label: 'Mac Mini', href: '/category/mac-mini' },
-          { label: 'Mac Pro / Mac Studio', href: '/category/mac-pro' },
-          { label: 'Macbook Accessories', href: '/category/macbook-accessories' },
+          { label: 'MacBook Air', href: '/category/laptops?brand=Apple' },
+          { label: 'MacBook Pro', href: '/category/laptops?brand=Apple' },
+          { label: 'iMac', href: '/category/laptops?brand=Apple' },
+          { label: 'Mac Mini', href: '/category/laptops?brand=Apple' },
+          { label: 'Mac Accessories', href: '/category/accessories?search=mac' },
         ]
       },
       {
         title: 'iPad',
         links: [
-          { label: 'iPad', href: '/category/ipad' },
-          { label: 'iPad Air', href: '/category/ipad-air' },
-          { label: 'iPad Pro', href: '/category/ipad-pro' },
-          { label: 'iPad Mini', href: '/category/ipad-mini' },
-          { label: 'Apple Pencil', href: '/category/apple-pencil' },
-          { label: 'iPad Accessories', href: '/category/ipad-accessories' },
+          { label: 'iPad Air', href: '/category/tablets?brand=Apple' },
+          { label: 'iPad Pro', href: '/category/tablets?brand=Apple' },
+          { label: 'iPad Mini', href: '/category/tablets?brand=Apple' },
+          { label: 'Apple Pencil', href: '/category/accessories' },
         ]
       },
       {
         title: 'Apple Watch',
         links: [
-          { label: 'Apple Watch', href: '/category/apple-watch' },
-          { label: 'Apple Watch Ultra Series', href: '/category/apple-watch-ultra' },
-          { label: 'Apple Watch SE', href: '/category/apple-watch-se' },
-          { label: 'Apple Watch Accessories', href: '/category/apple-watch-accessories' },
+          { label: 'Apple Watch Series', href: '/category/lifestyle?search=watch' },
+          { label: 'Apple Watch Ultra', href: '/category/lifestyle?search=watch' },
+          { label: 'Apple Watch SE', href: '/category/lifestyle?search=watch' },
         ]
       },
       {
         title: 'Apple Audio',
         links: [
-          { label: 'AirPods', href: '/category/airpods' },
-          { label: 'Earphone', href: '/category/earphone' },
-          { label: 'Beats EarBuds', href: '/category/beats' },
-          { label: 'Airpods Accessories', href: '/category/airpods-accessories' },
+          { label: 'AirPods', href: '/category/audio?brand=Apple' },
+          { label: 'AirPods Max', href: '/category/audio?brand=Apple' },
+          { label: 'Beats EarBuds', href: '/category/audio?brand=Beats' },
         ]
       },
       {
-        title: 'Apple Accessories',
+        title: 'Accessories',
         links: [
-          { label: 'Apple Adapters', href: '/category/apple-adapters' },
-          { label: 'Apple Cables', href: '/category/apple-cables' },
-          { label: 'Apple Keyboard | Mouse | Trackpad', href: '/category/apple-peripherals' },
-          { label: 'Apple AirTag', href: '/category/apple-airtag' },
+          { label: 'Apple Adapters', href: '/category/accessories?brand=Apple' },
+          { label: 'Apple Cables', href: '/category/accessories?brand=Apple' },
+          { label: 'Airtag', href: '/category/accessories?brand=Apple' },
         ]
       }
+
     ]
   },
   { name: 'Android', slug: 'android', hasDropdown: true },

@@ -45,7 +45,8 @@ export function Footer() {
           {/* Brand and Newsletter */}
           <div className="space-y-8">
             <Link href="/" className="group inline-block">
-              <Logo showText={true} className="scale-125 origin-left" />
+              <Logo className="scale-125 origin-left" />
+
             </Link>
 
             
@@ -138,13 +139,14 @@ export function Footer() {
           <p className="text-[13px] text-gray-400 font-medium">
             © {currentYear} <span className="text-gray-900 font-black">{APP_NAME.toUpperCase()}</span> . All Rights Reserved.
           </p>
-          <div className="flex items-center gap-6">
-            {footerLinks.legal.slice(0, 2).map((link) => (
+          <div className="flex flex-wrap items-center gap-6 mt-4 md:mt-0">
+            {footerLinks.legal.map((link) => (
               <Link key={link.label} href={link.href} className="text-[13px] text-gray-400 hover:text-primary transition-colors font-medium">
                 {link.label}
               </Link>
             ))}
           </div>
+
         </div>
       </div>
     </footer>
