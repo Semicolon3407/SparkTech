@@ -2,30 +2,22 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Heart, ShoppingCart, Share2, Check, Truck, Shield, RotateCcw } from 'lucide-react';
+import { Heart, ShoppingCart, Share2, Check, Info } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { PriceDisplay } from '@/components/shared/price-display';
-import { RatingStars } from '@/components/shared/rating-stars';
 import { QuantitySelector } from '@/components/shared/quantity-selector';
 import { useCart } from '@/contexts/cart-context';
 import { useWishlist } from '@/contexts/wishlist-context';
 import { toast } from 'sonner';
 import type { Product } from '@/types';
 import { cn } from '@/lib/utils';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 interface ProductInfoProps {
   product: Product;
   isCompact?: boolean;
 }
-
-const features = [
-  { icon: Truck, text: 'Free delivery on orders over Rs. 5,000' },
-  { icon: Shield, text: '1 Year Warranty' },
-  { icon: RotateCcw, text: '7 Days Easy Return' },
-];
 
 export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
   const { addItem, isInCart } = useCart();
@@ -33,9 +25,7 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
 
   const inCart = isInCart(product._id);
-  const inWishlist = isInWishlist(product._id);
   const outOfStock = product.stock === 0;
-  const lowStock = product.stock > 0 && product.stock <= 5;
 
   const handleAddToCart = () => {
     if (!outOfStock) {
@@ -46,193 +36,138 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
     }
   };
 
-  const handleToggleWishlist = async () => {
-    await toggleWishlist(product._id);
-    toast.success(
-      inWishlist ? 'Removed from wishlist' : 'Added to wishlist',
-      { description: product.name }
-    );
-  };
-
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: product.name,
-          text: product.description,
-          url: window.location.href,
-        });
-      } catch {
-        // User cancelled share
-      }
-    } else {
-      await navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard');
-    }
-  };
-
   return (
-    <div className={cn("flex flex-col gap-8", isCompact && "gap-6")}>
+    <div className="flex flex-col gap-6 w-full">
+      {/* Name */}
+      <h1 className="text-3xl font-semibold text-gray-900 leading-tight">
+        {product.name}
+      </h1>
 
+      {/* Price */}
+      <div className="flex flex-col gap-1">
+        <div className="text-[22px] font-bold text-primary">
+          Rs {product.price.toLocaleString('en-IN')}
+        </div>
+        <p className="text-[13px] text-gray-400">
+          Shipping is calculated at checkout
+        </p>
+      </div>
 
-      {/* Brand & Badge Header */}
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary bg-primary/5 px-4 py-1.5 rounded-full">
-          {product.brand}
-        </span>
-        <div className="flex items-center gap-2">
-          {outOfStock ? (
-            <Badge variant="destructive" className="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest leading-none">Sold Out</Badge>
-          ) : lowStock ? (
-            <Badge variant="secondary" className="bg-orange-50 text-orange-600 border-none rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest leading-none">
-              Limited Stock
-            </Badge>
-          ) : (
-            <Badge variant="secondary" className="bg-emerald-50 text-emerald-600 border-none rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest leading-none">
-              In Stock
-            </Badge>
-          )}
+      {/* Choose Colour */}
+      <div className="space-y-3 pt-2">
+        <label className="text-sm font-semibold text-gray-700">Choose Colour</label>
+        <div className="flex flex-wrap gap-2">
+          {['Black', 'White', 'Sage', 'Mist Blue', 'Lavender'].map((color) => {
+            const isSelected = color === 'Black';
+            return (
+              <button
+                key={color}
+                className={cn(
+                  "px-4 py-2 text-[13px] font-medium rounded border transition-all flex items-center justify-center gap-1.5",
+                  isSelected 
+                    ? "border-primary text-gray-900" 
+                    : "border-gray-200 text-gray-700 hover:border-gray-300"
+                )}
+              >
+                {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
+                {color}
+              </button>
+            )
+          })}
         </div>
       </div>
 
-      {/* Name & Pricing */}
-      <div className="space-y-4">
-        <h1 className={cn(
-          "font-extrabold tracking-tight text-gray-950 leading-[0.95] uppercase",
-          isCompact ? "text-xl md:text-2xl" : "text-3xl md:text-4xl lg:text-5xl"
-        )}>
-          {product.name}
-        </h1>
-
-        
-        <div className="flex items-center gap-6">
-          <RatingStars
-            rating={product.rating}
-            reviewCount={product.reviewCount}
-            showValue
-          />
-          <Separator orientation="vertical" className="h-4 bg-gray-200" />
-          <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400">
-            Art. No: {product.sku}
-          </span>
+      {/* Choose Size */}
+      <div className="space-y-3 pt-2">
+        <label className="text-sm font-semibold text-gray-700">Choose Size</label>
+        <div className="flex flex-wrap gap-2">
+          {['256GB', '512GB'].map((size) => {
+            const isSelected = size === '256GB';
+            return (
+              <button
+                key={size}
+                className={cn(
+                  "px-4 py-2 text-[13px] font-medium rounded border transition-all flex items-center justify-center gap-1.5",
+                  isSelected 
+                    ? "border-primary text-gray-900" 
+                    : "border-gray-200 text-gray-700 hover:border-gray-300"
+                )}
+              >
+                {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
+                {size}
+              </button>
+            )
+          })}
         </div>
-
-        {!isCompact && (
-          <div className="pt-4">
-            <PriceDisplay
-              price={product.price}
-              comparePrice={product.comparePrice}
-              size="xl"
-              className="font-extrabold text-gray-950"
-            />
-          </div>
-        )}
-
-        {isCompact && (
-          <div className="pt-2">
-            <PriceDisplay
-              price={product.price}
-              comparePrice={product.comparePrice}
-              size="lg"
-              className="font-extrabold text-gray-950"
-            />
-          </div>
-        )}
-
-
       </div>
 
-      <Separator className="bg-gray-100" />
+      <Separator className="my-2 bg-gray-100" />
 
       {/* Action Area */}
-      <div className="space-y-8">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-gray-400">Select Quantity</span>
-            {!outOfStock && <span className="text-[11px] font-bold text-gray-400">{product.stock} units available</span>}
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <QuantitySelector
-              value={quantity}
-              onChange={setQuantity}
-              max={product.stock}
-              className="h-14 w-40 rounded-2xl border-gray-100 bg-gray-50/50"
-            />
-            
-            <div className="flex flex-1 gap-3">
-              <Button
-                size={isCompact ? "default" : "lg"}
-                className={cn(
-                  "flex-1 rounded-2xl font-extrabold uppercase tracking-widest text-xs shadow-xl shadow-primary/10 transition-all hover:translate-y-[-2px] hover:shadow-2xl hover:shadow-primary/20",
-                  isCompact ? "h-12" : "h-14"
-                )}
-                disabled={outOfStock || inCart}
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                {inCart ? 'Go to Cart' : outOfStock ? 'Sold Out' : isCompact ? 'Add to Bag' : 'Add to Shopping Bag'}
-              </Button>
-
-
-              <Button
-                size={isCompact ? "default" : "lg"}
-                variant="outline"
-                className={cn(
-                  "rounded-2xl border-gray-100 transition-all active:scale-95",
-                  isCompact ? "h-12 w-12" : "h-14 w-14",
-                  inWishlist && "border-red-100 bg-red-50"
-                )}
-                onClick={handleToggleWishlist}
-              >
-
-                <Heart
-                  className={cn(
-                    'h-5 w-5 transition-colors',
-                    inWishlist ? 'fill-red-500 text-red-500' : 'text-gray-400'
-                  )}
-                />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Benefits Grid - Collapsed on compact */}
-        {!isCompact && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-b border-gray-100 py-8">
-            {features.map((feature) => (
-              <div key={feature.text} className="flex flex-col items-center text-center gap-3">
-                <div className="p-3 rounded-2xl bg-gray-50 group">
-                  <feature.icon className="h-5 w-5 text-gray-400 group-hover:text-primary transition-colors" />
-                </div>
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 leading-tight px-2">
-                  {feature.text}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="flex items-center gap-4">
+        <QuantitySelector
+          value={quantity}
+          onChange={setQuantity}
+          max={product.stock}
+          className="h-[46px] w-[110px] rounded border border-gray-200 bg-white"
+        />
+        
+        <Button
+          className={cn(
+            "flex-1 rounded h-[46px] font-bold tracking-wide text-[13px] transition-all shadow-none uppercase",
+            outOfStock ? "bg-[#F3F4F6] text-gray-400 hover:bg-[#F3F4F6]" : "bg-primary hover:bg-primary/90 text-primary-foreground"
+          )}
+          disabled={outOfStock || inCart}
+          onClick={handleAddToCart}
+        >
+          {inCart ? 'GO TO CART' : outOfStock ? 'OUT OF STOCK' : 'ADD TO CART'}
+        </Button>
       </div>
 
-      {/* Sharing & Secondary Actions - Hidden on compact */}
-      {!isCompact && (
-        <div className="flex items-center justify-between pt-2">
-          <button 
-            onClick={handleShare}
-            className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-gray-400 hover:text-primary transition-colors"
-          >
-            <Share2 className="h-4 w-4" />
-            Share with friends
-          </button>
-          
-          <div className="flex gap-4">
-            <Link href="/shipping" className="text-[10px] font-bold text-gray-400 underline underline-offset-4 decoration-gray-200 hover:text-gray-950 transition-colors">Shipping Info</Link>
-            <Link href="/returns" className="text-[10px] font-bold text-gray-400 underline underline-offset-4 decoration-gray-200 hover:text-gray-950 transition-colors">Return Policy</Link>
+      <Separator className="my-2 bg-gray-100" />
+
+      {/* Description Accordion */}
+      <Accordion type="single" collapsible defaultValue="description" className="w-full">
+        <AccordionItem value="description" className="border-none">
+          <AccordionTrigger className="hover:no-underline py-2 text-[15px] font-bold text-gray-900 flex justify-start gap-2">
+            <Info className="w-[18px] h-[18px]" /> Description
+          </AccordionTrigger>
+          <AccordionContent className="text-gray-600 leading-[1.8] space-y-4 pt-4 pb-2 text-[13px]">
+            <h3 className="text-base font-bold text-gray-900">
+              6.1" Super Retina XDR, A19 Performance & 48MP Camera
+            </h3>
+            <p className="text-[13.5px]">
+              The <strong>{product.name}</strong> delivers fast performance, beautiful photos, and all-day battery in a sleek, durable design. Its <strong>6.1" Super Retina XDR</strong> display is bright and color-accurate, while the <strong>A19 chip</strong> powers smooth gaming, creative apps, and on-device AI. A <strong>48MP main camera</strong> captures sharp detail with improved low-light, and a high-quality front camera keeps selfies natural. With <strong>USB-C, 5G, Wi-Fi</strong>, and <strong>UWB</strong>, plus iOS 26 features, it's a powerful everyday iPhone for work and play.
+            </p>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
+      {/* Metadata */}
+      <div className="flex flex-col gap-4 pt-4 pb-2">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-gray-900 text-sm w-20">Categories:</span>
+          <div className="flex flex-wrap gap-2">
+            {['Apple iPhones', 'Phones', 'Apple iPhone 17'].map(cat => (
+              <span key={cat} className="px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
+                {cat}
+              </span>
+            ))}
           </div>
         </div>
-      )}
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-gray-900 text-sm w-20">Brand:</span>
+          <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
+            {product.brand || 'Apple'}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-gray-900 text-sm w-20">SKU:</span>
+          <span className="font-semibold text-gray-700 text-sm">
+            {product.sku || 'N/A'}
+          </span>
+        </div>
+      </div>
     </div>
-
-
   );
 }
