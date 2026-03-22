@@ -7,12 +7,9 @@ import { SlidersHorizontal, X, ChevronDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
-import { BRANDS, CATEGORIES } from '@/lib/constants';
-import { formatPrice } from '@/lib/utils/format';
+import { CATEGORIES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
 interface ProductFiltersProps {
@@ -20,24 +17,9 @@ interface ProductFiltersProps {
   isMobileTrigger?: boolean;
 }
 
-const allBrands = [...new Set([...BRANDS.mobile, ...BRANDS.laptop, ...BRANDS.audio])];
-
-const COLORS = [
-  { name: 'Black', hex: '#000000' },
-  { name: 'White', hex: '#FFFFFF' },
-  { name: 'Silver', hex: '#C0C0C0' },
-  { name: 'Gold', hex: '#D4AF37' },
-  { name: 'Blue', hex: '#0000FF' },
-  { name: 'Red', hex: '#FF0000' },
-  { name: 'Space Gray', hex: '#71706E' },
-];
-
-const DISCOUNTS = [
-  { label: '10% or more', value: '10' },
-  { label: '20% or more', value: '20' },
-  { label: '30% or more', value: '30' },
-  { label: '50% or more', value: '50' },
-];
+// Fixed attributes since we now use a simpler structure
+const TOP_BRANDS = ['Apple', 'Samsung', 'Sony', 'JBL', 'Xiaomi', 'Dell', 'HP', 'Lenovo'];
+const POPULAR_COLORS = ['Black', 'White', 'Silver', 'Gold', 'Blue', 'Graphite', 'Sage'];
 
 export function ProductFilters({ category, isMobileTrigger = false }: ProductFiltersProps) {
   const router = useRouter();
@@ -45,8 +27,7 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const currentBrands = searchParams.get('brands')?.split(',').filter(Boolean) || [];
-  const currentColor = searchParams.get('colors') || '';
-  const currentDiscount = searchParams.get('discount') || '';
+  const currentColors = searchParams.get('colors')?.split(',').filter(Boolean) || [];
   const currentMinPrice = parseInt(searchParams.get('minPrice') || '0');
   const currentMaxPrice = parseInt(searchParams.get('maxPrice') || '500000');
   const inStock = searchParams.get('inStock') === 'true';
@@ -68,6 +49,13 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
+  const toggleItem = (list: string[], item: string, key: string) => {
+    const newList = list.includes(item) 
+      ? list.filter(i => i !== item) 
+      : [...list, item];
+    updateFilters(key, newList);
+  };
+
   const clearAllFilters = () => {
     const params = new URLSearchParams();
     if (category) params.set('category', category);
@@ -75,46 +63,144 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
     setPriceRange([0, 500000]);
   };
 
-  const hasActiveFilters = currentBrands.length > 0 || currentMinPrice > 0 || currentMaxPrice < 500000 || inStock || currentColor || currentDiscount;
+  const hasActiveFilters = currentBrands.length > 0 || currentColors.length > 0 || currentMinPrice > 0 || currentMaxPrice < 500000 || inStock;
 
   const FilterContent = () => (
-    <div className="space-y-10">
+    <div className="space-y-10 pb-20 lg:pb-0">
+      {/* Category Selection (Only if not already on a category page) */}
+      {!category && (
+        <div className="space-y-5">
+          <h3 className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400">Categories</h3>
+          <div className="flex flex-col gap-3">
+            {CATEGORIES.filter(c => c.slug !== 'on-sale').map((cat) => (
+              <button
+                key={cat.slug}
+                onClick={() => updateFilters('category', cat.slug)}
+                className={cn(
+                  "text-[14px] font-bold text-left transition-colors",
+                  searchParams.get('category') === cat.slug ? "text-primary" : "text-gray-600 hover:text-gray-900"
+                )}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Brands Filter */}
+      <div className="space-y-5">
+        <h3 className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400">Popular Brands</h3>
+        <div className="grid grid-cols-1 gap-3">
+          {TOP_BRANDS.map((brand) => (
+            <div key={brand} className="flex items-center space-x-3 group cursor-pointer" onClick={() => toggleItem(currentBrands, brand, 'brands')}>
+              <Checkbox 
+                id={`brand-${brand}`} 
+                checked={currentBrands.includes(brand)}
+                className="rounded-md border-gray-200 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+              />
+              <Label 
+                htmlFor={`brand-${brand}`} 
+                className="text-[13.5px] font-bold text-gray-700 cursor-pointer group-hover:text-primary transition-colors"
+              >
+                {brand}
+              </Label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Separator className="bg-gray-100" />
+
       {/* Price Filter */}
-      <div className="space-y-5 pb-8 border-b border-gray-100">
-        <h3 className="text-[15px] font-bold text-gray-950">Price</h3>
+      <div className="space-y-5">
+        <h3 className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400">Price Range</h3>
         <div className="flex items-center gap-3">
           <div className="flex-1 space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">From</span>
+            <span className="text-[10px] font-extrabold uppercase text-gray-400 tracking-tighter">Min</span>
             <input
               type="number"
               value={priceRange[0]}
               onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
-              className="w-full h-11 px-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
+              className="w-full h-11 px-3 border border-gray-200 rounded-xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all"
             />
           </div>
           <span className="text-gray-300 mt-6">-</span>
           <div className="flex-1 space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">To</span>
+            <span className="text-[10px] font-extrabold uppercase text-gray-400 tracking-tighter">Max</span>
             <input
               type="number"
               value={priceRange[1]}
               onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 0])}
-              className="w-full h-11 px-3 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all"
+              className="w-full h-11 px-3 border border-gray-200 rounded-xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all"
             />
           </div>
         </div>
         <Button 
           variant="outline" 
           size="sm" 
-          className="w-full text-[11px] font-extrabold uppercase tracking-widest h-11 rounded-md border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-[0.98]"
+          className="w-full h-11 rounded-xl text-[11px] font-extrabold uppercase tracking-widest border-gray-100 hover:bg-gray-50 active:scale-95 transition-all"
           onClick={() => {
             updateFilters('minPrice', String(priceRange[0]));
             updateFilters('maxPrice', String(priceRange[1]));
           }}
         >
-          Update Price
+          Check Range
         </Button>
       </div>
+
+      <Separator className="bg-gray-100" />
+
+      {/* Color Filter */}
+      <div className="space-y-5">
+        <h3 className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400">Colors</h3>
+        <div className="flex flex-wrap gap-2">
+          {POPULAR_COLORS.map((color) => {
+            const isSelected = currentColors.includes(color);
+            return (
+              <button
+                key={color}
+                onClick={() => toggleItem(currentColors, color, 'colors')}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg border text-[11px] font-extrabold uppercase tracking-tight transition-all",
+                  isSelected 
+                    ? "bg-primary border-primary text-white shadow-lg" 
+                    : "bg-white border-gray-100 text-gray-500 hover:border-gray-200"
+                )}
+              >
+                {color}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Availability */}
+      <div className="pt-2">
+        <div className="flex items-center space-x-3 group cursor-pointer py-2" onClick={() => updateFilters('inStock', !inStock)}>
+          <Checkbox 
+            id="inStock" 
+            checked={inStock}
+            className="rounded-md border-gray-200 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
+          />
+          <Label 
+            htmlFor="inStock" 
+            className="text-[13.5px] font-bold text-gray-700 cursor-pointer group-hover:text-emerald-500 transition-colors"
+          >
+            Show In-Stock Only
+          </Label>
+        </div>
+      </div>
+
+      {hasActiveFilters && (
+        <Button 
+          variant="ghost" 
+          className="w-full text-destructive hover:text-destructive hover:bg-destructive/5 text-[11px] font-extrabold uppercase tracking-widest"
+          onClick={clearAllFilters}
+        >
+          <X className="w-3 h-3 mr-2" /> Clear All Filters
+        </Button>
+      )}
     </div>
   );
 
@@ -122,27 +208,23 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
     return (
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" className="w-full flex justify-between px-4 h-11 border-gray-200 text-gray-600 font-bold text-xs uppercase tracking-wider">
-            <div className="flex items-center gap-2">
-              <SlidersHorizontal className="h-4 w-4" />
-              Filter By
-            </div>
-            <ChevronDown className="h-4 w-4" />
+          <Button variant="outline" className="h-11 border-gray-200 rounded-xl px-4 gap-2 text-[11px] font-extrabold uppercase tracking-widest">
+            <SlidersHorizontal className="h-4 w-4" />
+            Filters
+            {hasActiveFilters && <span className="w-2 h-2 bg-primary rounded-full" />}
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-full sm:w-[350px] p-6">
-          <SheetHeader className="mb-8">
-            <SheetTitle className="text-left font-extrabold uppercase tracking-widest">Filter</SheetTitle>
+        <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 overflow-y-auto">
+          <SheetHeader className="p-6 border-b text-left sticky top-0 bg-white z-10">
+            <SheetTitle className="text-sm font-extrabold uppercase tracking-widest">Store Filters</SheetTitle>
           </SheetHeader>
-          <FilterContent />
+          <div className="p-8">
+            <FilterContent />
+          </div>
         </SheetContent>
       </Sheet>
     );
   }
 
-  return (
-    <div className="w-[280px] shrink-0 hidden lg:block pr-8">
-      <FilterContent />
-    </div>
-  );
+  return <FilterContent />;
 }

@@ -34,18 +34,13 @@ const adminLinks = [
     icon: Package,
   },
   {
-    href: "/admin/categories",
-    label: "Categories",
-    icon: FolderOpen,
-  },
-  {
     href: "/admin/orders",
     label: "Orders",
     icon: ShoppingCart,
   },
   {
     href: "/admin/customers",
-    label: "Customers",
+    label: "Users",
     icon: Users,
   },
   {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -29,9 +29,20 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user) {
+      if (["admin", "superadmin"].includes(user.role)) {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
+    }
+  }, [user, isAuthenticated, authLoading, router]);
 
   const {
     register,
@@ -56,7 +67,17 @@ export default function LoginPage() {
       const result = await login(data.email, data.password);
       if (result.success) {
         toast.success("Welcome back!");
-        router.push("/");
+        
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirect = searchParams.get("redirect");
+
+        if (redirect) {
+          router.push(redirect);
+        } else if (["admin", "superadmin"].includes(result.user?.role || "")) {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
       } else {
         toast.error(result.error || "Invalid email or password");
       }

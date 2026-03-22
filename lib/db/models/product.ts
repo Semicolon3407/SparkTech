@@ -6,13 +6,12 @@ export interface ISpecification {
 }
 
 export interface IProduct extends Document {
-  _id: string;
   name: string;
   slug: string;
   description: string;
   price: number;
   comparePrice?: number;
-  category: mongoose.Types.ObjectId;
+  category: string;
   subcategory?: string;
   brand: string;
   images: string[];
@@ -22,6 +21,8 @@ export interface IProduct extends Document {
   features: string[];
   rating: number;
   reviewCount: number;
+  colors: string[];
+  sizes: string[];
   isFeatured: boolean;
   isActive: boolean;
   createdAt: Date;
@@ -60,8 +61,7 @@ const ProductSchema = new Schema<IProduct>(
       min: 0,
     },
     category: {
-      type: Schema.Types.ObjectId,
-      ref: 'Category',
+      type: String,
       required: [true, 'Category is required'],
     },
     subcategory: {
@@ -98,6 +98,8 @@ const ProductSchema = new Schema<IProduct>(
       type: Number,
       default: 0,
     },
+    colors: [String],
+    sizes: [String],
     isFeatured: {
       type: Boolean,
       default: false,
@@ -113,7 +115,6 @@ const ProductSchema = new Schema<IProduct>(
 );
 
 // Indexes for faster queries
-ProductSchema.index({ slug: 1 });
 ProductSchema.index({ category: 1 });
 ProductSchema.index({ brand: 1 });
 ProductSchema.index({ price: 1 });
@@ -121,6 +122,9 @@ ProductSchema.index({ rating: -1 });
 ProductSchema.index({ createdAt: -1 });
 ProductSchema.index({ name: 'text', description: 'text' });
 
-const Product: Model<IProduct> = mongoose.models.Product || mongoose.model<IProduct>('Product', ProductSchema);
+// Avoid Model Compilation errors in Next.js Dev Mode
+const Product = (mongoose.models && mongoose.models.Product) 
+  ? (mongoose.models.Product as Model<IProduct>)
+  : mongoose.model<IProduct>('Product', ProductSchema);
 
 export default Product;

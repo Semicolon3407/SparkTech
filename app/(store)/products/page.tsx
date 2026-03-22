@@ -28,6 +28,7 @@ interface ProductsPageProps {
     colors?: string;
     discount?: string;
     search?: string;
+    inStock?: string;
   }>;
 }
 
@@ -46,7 +47,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     colors: params.colors,
     discount: params.discount,
     search: params.search,
+    inStock: params.inStock === 'true',
   };
+
 
   const { data: products, pagination } = await ProductService.getProducts(filters);
 

@@ -38,6 +38,8 @@ export interface Product {
   sku: string;
   specifications: Specification[];
   features: string[];
+  colors?: string[];
+  sizes?: string[];
   rating: number;
   reviewCount: number;
   isFeatured: boolean;

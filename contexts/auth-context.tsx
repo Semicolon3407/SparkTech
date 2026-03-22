@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (name: string, email: string, password: string, phone?: string) => Promise<{ success: boolean; error?: string }>;
 
   logout: () => Promise<void>;
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.success) {
         setUser(data.data.user);
-        return { success: true };
+        return { success: true, user: data.data.user };
       }
 
       return { success: false, error: data.error || 'Login failed' };

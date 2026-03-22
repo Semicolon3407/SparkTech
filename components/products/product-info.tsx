@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Heart, ShoppingCart, Share2, Check, Info } from 'lucide-react';
+import { Heart, ShoppingCart, Share2, Check, Info, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -23,12 +23,23 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
   const { addItem, isInCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState<string | null>(product.colors && product.colors.length > 0 ? product.colors[0] : null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(product.sizes && product.sizes.length > 0 ? product.sizes[0] : null);
 
   const inCart = isInCart(product._id);
   const outOfStock = product.stock === 0;
 
   const handleAddToCart = () => {
     if (!outOfStock) {
+      if (product.colors && product.colors.length > 0 && !selectedColor) {
+        toast.error('Please select a color');
+        return;
+      }
+      if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+        toast.error('Please select a size');
+        return;
+      }
+
       addItem(product, quantity);
       toast.success('Added to cart', {
         description: `${product.name} (${quantity}) added to your cart`,
@@ -37,7 +48,7 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col gap-6 w-full font-sans">
       {/* Name */}
       <h1 className="text-3xl font-semibold text-gray-900 leading-tight">
         {product.name}
@@ -48,58 +59,74 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
         <div className="text-[22px] font-bold text-primary">
           Rs {product.price.toLocaleString('en-IN')}
         </div>
+        {product.comparePrice && product.comparePrice > product.price && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground line-through decoration-destructive/50">
+              Rs {product.comparePrice.toLocaleString('en-IN')}
+            </span>
+            <span className="text-[10px] font-bold px-1.5 py-0.5 bg-destructive/10 text-destructive rounded">
+              {Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}% OFF
+            </span>
+          </div>
+        )}
         <p className="text-[13px] text-gray-400">
           Shipping is calculated at checkout
         </p>
       </div>
 
       {/* Choose Colour */}
-      <div className="space-y-3 pt-2">
-        <label className="text-sm font-semibold text-gray-700">Choose Colour</label>
-        <div className="flex flex-wrap gap-2">
-          {['Black', 'White', 'Sage', 'Mist Blue', 'Lavender'].map((color) => {
-            const isSelected = color === 'Black';
-            return (
-              <button
-                key={color}
-                className={cn(
-                  "px-4 py-2 text-[13px] font-medium rounded border transition-all flex items-center justify-center gap-1.5",
-                  isSelected 
-                    ? "border-primary text-gray-900" 
-                    : "border-gray-200 text-gray-700 hover:border-gray-300"
-                )}
-              >
-                {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
-                {color}
-              </button>
-            )
-          })}
+      {product.colors && product.colors.length > 0 && (
+        <div className="space-y-3 pt-2">
+          <label className="text-sm font-semibold text-gray-700">Choose Colour</label>
+          <div className="flex flex-wrap gap-2">
+            {product.colors.map((color) => {
+              const isSelected = selectedColor === color;
+              return (
+                <button
+                  key={color}
+                  onClick={() => setSelectedColor(color)}
+                  className={cn(
+                    "px-4 py-2 text-[13px] font-bold rounded-lg border-2 transition-all flex items-center justify-center gap-1.5",
+                    isSelected
+                      ? "border-primary bg-primary/5 text-primary shadow-sm"
+                      : "border-gray-100 bg-white text-gray-600 hover:border-gray-200"
+                  )}
+                >
+                  {isSelected && <Check className="w-3.5 h-3.5" />}
+                  {color}
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Choose Size */}
-      <div className="space-y-3 pt-2">
-        <label className="text-sm font-semibold text-gray-700">Choose Size</label>
-        <div className="flex flex-wrap gap-2">
-          {['256GB', '512GB'].map((size) => {
-            const isSelected = size === '256GB';
-            return (
-              <button
-                key={size}
-                className={cn(
-                  "px-4 py-2 text-[13px] font-medium rounded border transition-all flex items-center justify-center gap-1.5",
-                  isSelected 
-                    ? "border-primary text-gray-900" 
-                    : "border-gray-200 text-gray-700 hover:border-gray-300"
-                )}
-              >
-                {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
-                {size}
-              </button>
-            )
-          })}
+      {product.sizes && product.sizes.length > 0 && (
+        <div className="space-y-3 pt-2">
+          <label className="text-sm font-semibold text-gray-700">Choose Size / Storage</label>
+          <div className="flex flex-wrap gap-2">
+            {product.sizes.map((size) => {
+              const isSelected = selectedSize === size;
+              return (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={cn(
+                    "px-4 py-2 text-[13px] font-bold rounded-lg border-2 transition-all flex items-center justify-center gap-1.5",
+                    isSelected
+                      ? "border-primary bg-primary/5 text-primary shadow-sm"
+                      : "border-gray-100 bg-white text-gray-600 hover:border-gray-200"
+                  )}
+                >
+                  {isSelected && <Check className="w-3.5 h-3.5" />}
+                  {size}
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <Separator className="my-2 bg-gray-100" />
 
@@ -109,13 +136,13 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
           value={quantity}
           onChange={setQuantity}
           max={product.stock}
-          className="h-[46px] w-[110px] rounded border border-gray-200 bg-white"
+          className="h-[46px] w-[110px] rounded-lg border border-gray-200 bg-white"
         />
-        
+
         <Button
           className={cn(
-            "flex-1 rounded h-[46px] font-bold tracking-wide text-[13px] transition-all shadow-none uppercase",
-            outOfStock ? "bg-[#F3F4F6] text-gray-400 hover:bg-[#F3F4F6]" : "bg-primary hover:bg-primary/90 text-primary-foreground"
+            "flex-1 rounded-lg h-[46px] font-bold tracking-wide text-[13px] transition-all shadow-none uppercase",
+            outOfStock ? "bg-[#F3F4F6] text-gray-400 hover:bg-[#F3F4F6]" : "bg-primary hover:bg-primary/90 text-primary-foreground transform active:scale-95"
           )}
           disabled={outOfStock || inCart}
           onClick={handleAddToCart}
@@ -133,11 +160,8 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
             <Info className="w-[18px] h-[18px]" /> Description
           </AccordionTrigger>
           <AccordionContent className="text-gray-600 leading-[1.8] space-y-4 pt-4 pb-2 text-[13px]">
-            <h3 className="text-base font-bold text-gray-900">
-              6.1" Super Retina XDR, A19 Performance & 48MP Camera
-            </h3>
             <p className="text-[13.5px]">
-              The <strong>{product.name}</strong> delivers fast performance, beautiful photos, and all-day battery in a sleek, durable design. Its <strong>6.1" Super Retina XDR</strong> display is bright and color-accurate, while the <strong>A19 chip</strong> powers smooth gaming, creative apps, and on-device AI. A <strong>48MP main camera</strong> captures sharp detail with improved low-light, and a high-quality front camera keeps selfies natural. With <strong>USB-C, 5G, Wi-Fi</strong>, and <strong>UWB</strong>, plus iOS 26 features, it's a powerful everyday iPhone for work and play.
+              {product.description}
             </p>
           </AccordionContent>
         </AccordionItem>
@@ -146,25 +170,21 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
       {/* Metadata */}
       <div className="flex flex-col gap-4 pt-4 pb-2">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-gray-900 text-sm w-20">Categories:</span>
-          <div className="flex flex-wrap gap-2">
-            {['Apple iPhones', 'Phones', 'Apple iPhone 17'].map(cat => (
-              <span key={cat} className="px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
-                {cat}
-              </span>
-            ))}
-          </div>
+          <span className="font-bold text-gray-900 text-sm w-20">Category:</span>
+          <span className="px-3 py-1 bg-primary/5 text-primary rounded-full text-xs font-bold">
+            {product.category as string}
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="font-bold text-gray-900 text-sm w-20">Brand:</span>
-          <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-semibold text-gray-700">
-            {product.brand || 'Apple'}
+          <span className="px-3 py-1 bg-gray-50 text-gray-700 rounded-full text-xs font-bold border border-gray-100">
+            {product.brand}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="font-bold text-gray-900 text-sm w-20">SKU:</span>
-          <span className="font-semibold text-gray-700 text-sm">
-            {product.sku || 'N/A'}
+          <span className="font-bold text-gray-500 text-sm tracking-widest">
+            {product.sku}
           </span>
         </div>
       </div>
