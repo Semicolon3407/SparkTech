@@ -64,9 +64,13 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      await registerUser(data.name, data.email, data.password, data.phone);
-      toast.success("Account created successfully!");
-      router.push("/");
+      const result = await registerUser(data.name, data.email, data.password, data.phone);
+      if (result.success) {
+        toast.success("Account created successfully!");
+        router.push("/");
+      } else {
+        toast.error(result.error || "Failed to create account");
+      }
     } catch (error) {
       toast.error("Failed to create account. Please try again.");
     } finally {

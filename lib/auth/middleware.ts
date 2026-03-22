@@ -32,7 +32,7 @@ export async function requireAdmin(request: NextRequest) {
   const { user, error } = await requireAuth(request);
   if (error) return { user: null, error };
   
-  if (user!.role !== 'admin') {
+  if (!['admin', 'superadmin'].includes(user!.role)) {
     return {
       user: null,
       error: errorResponse('Forbidden - Admin access required', 403),

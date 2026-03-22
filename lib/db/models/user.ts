@@ -13,12 +13,11 @@ export interface IAddress {
 }
 
 export interface IUser extends Document {
-  _id: string;
   email: string;
   password: string;
   name: string;
   phone?: string;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'superadmin';
   addresses: IAddress[];
   createdAt: Date;
   updatedAt: Date;
@@ -60,7 +59,7 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ['user', 'admin'],
+      enum: ['user', 'admin', 'superadmin'],
       default: 'user',
     },
     addresses: [AddressSchema],

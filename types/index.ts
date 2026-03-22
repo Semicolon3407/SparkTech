@@ -4,7 +4,7 @@ export interface User {
   email: string;
   name: string;
   phone?: string;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'superadmin';
   addresses: Address[];
   createdAt: Date;
   updatedAt: Date;

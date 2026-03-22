@@ -53,11 +53,15 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      await login(data.email, data.password);
-      toast.success("Welcome back!");
-      router.push("/");
+      const result = await login(data.email, data.password);
+      if (result.success) {
+        toast.success("Welcome back!");
+        router.push("/");
+      } else {
+        toast.error(result.error || "Invalid email or password");
+      }
     } catch (error) {
-      toast.error("Invalid email or password");
+      toast.error("An error occurred during sign in");
     } finally {
       setIsLoading(false);
     }

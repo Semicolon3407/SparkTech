@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface AdminHeaderProps {
   title: string;
@@ -88,7 +89,17 @@ export function AdminHeader({ title, description }: AdminHeaderProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>
             <div>
-              <p className="font-medium">{user?.name || "Admin"}</p>
+              <div className="flex items-center gap-2">
+                <p className="font-medium">{user?.name || "Admin"}</p>
+                {user?.role && (
+                  <Badge variant="outline" className={cn(
+                    "text-[10px] px-1 py-0 h-4 uppercase",
+                    user.role === 'superadmin' ? "border-primary text-primary" : "text-muted-foreground"
+                  )}>
+                    {user.role}
+                  </Badge>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">
                 {user?.email || "admin@example.com"}
               </p>

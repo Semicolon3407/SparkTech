@@ -10,10 +10,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
-  // Bypass authentication check for now
-  /*
   useEffect(() => {
-    if (!isLoading && (!user || user.role !== "admin")) {
+    if (!isLoading && (!user || !["admin", "superadmin"].includes(user.role))) {
       router.push("/login?redirect=/admin");
     }
   }, [user, isLoading, router]);
@@ -26,10 +24,10 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user || user.role !== "admin") {
+  if (!user || !["admin", "superadmin"].includes(user.role)) {
     return null;
   }
-  */
+
 
   return (
     <div className="min-h-screen bg-background">
