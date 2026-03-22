@@ -32,7 +32,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const savedCart = localStorage.getItem(CART_STORAGE_KEY);
     if (savedCart) {
       try {
-        setItems(JSON.parse(savedCart));
+        const parsed = JSON.parse(savedCart);
+        // Validate the structure to clear out old/corrupted data
+        const validItems = parsed.filter((item: any) => 
+          item?.product?._id && Array.isArray(item?.product?.images)
+        );
+        setItems(validItems);
+        if (validItems.length !== parsed.length) {
+          // If we filtered out bad data, update storage
+          localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(validItems));
+        }
       } catch {
         localStorage.removeItem(CART_STORAGE_KEY);
       }

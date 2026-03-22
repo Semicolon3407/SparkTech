@@ -34,12 +34,18 @@ export function WishlistItem({ item }: WishlistItemProps) {
         href={`/products/${item.slug}`}
         className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted"
       >
-        <Image
-          src={item.images?.[0] || ''}
-          alt={item.name}
-          fill
-          className="object-cover"
-        />
+        {item.images && item.images[0] ? (
+          <Image
+            src={item.images[0]}
+            alt={item.name}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+             <span className="text-gray-300 text-[10px] font-bold uppercase tracking-widest text-center">No Image</span>
+          </div>
+        )}
         {isOutOfStock && (
           <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
             <Badge variant="secondary">Out of Stock</Badge>

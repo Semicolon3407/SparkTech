@@ -9,7 +9,10 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { useCart } from "@/contexts/cart-context";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 
+import { useRouter } from "next/navigation";
+
 export default function CartPage() {
+  const router = useRouter();
   const { items, clearCart } = useCart();
 
   const breadcrumbItems = [
@@ -25,11 +28,10 @@ export default function CartPage() {
           icon={ShoppingBag}
           title="Your cart is empty"
           description="Looks like you haven't added anything to your cart yet. Start shopping to fill it up!"
-          action={
-            <Button asChild size="lg">
-              <Link href="/products">Browse Products</Link>
-            </Button>
-          }
+          action={{
+            label: "Browse Products",
+            onClick: () => router.push("/products")
+          }}
         />
       </div>
     );
@@ -57,7 +59,7 @@ export default function CartPage() {
 
           <div className="bg-card rounded-lg border border-border p-4 md:p-6">
             {items.map((item) => (
-              <CartItem key={item.productId} item={item} />
+              <CartItem key={item.product._id} item={item} />
             ))}
           </div>
 
