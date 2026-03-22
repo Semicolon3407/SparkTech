@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { SlidersHorizontal, X, ChevronDown, Check } from 'lucide-react';
+import { SlidersHorizontal, X, ChevronDown, Check, Zap, Filter } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -17,7 +17,6 @@ interface ProductFiltersProps {
   isMobileTrigger?: boolean;
 }
 
-// Fixed attributes since we now use a simpler structure
 const TOP_BRANDS = ['Apple', 'Samsung', 'Sony', 'JBL', 'Xiaomi', 'Dell', 'HP', 'Lenovo'];
 const POPULAR_COLORS = ['Black', 'White', 'Silver', 'Gold', 'Blue', 'Graphite', 'Sage'];
 
@@ -66,19 +65,23 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
   const hasActiveFilters = currentBrands.length > 0 || currentColors.length > 0 || currentMinPrice > 0 || currentMaxPrice < 500000 || inStock;
 
   const FilterContent = () => (
-    <div className="space-y-10 pb-20 lg:pb-0">
-      {/* Category Selection (Only if not already on a category page) */}
+    <div className="space-y-12 pb-20 lg:pb-0 animate-in fade-in slide-in-from-left-4 duration-500">
+      {/* Category Selection */}
       {!category && (
-        <div className="space-y-5">
-          <h3 className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400">Categories</h3>
+        <div className="space-y-6">
+          <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
+            <Zap className="w-3 h-3 text-primary" /> Collections
+          </h3>
           <div className="flex flex-col gap-3">
             {CATEGORIES.filter(c => c.slug !== 'on-sale').map((cat) => (
               <button
                 key={cat.slug}
                 onClick={() => updateFilters('category', cat.slug)}
                 className={cn(
-                  "text-[14px] font-bold text-left transition-colors",
-                  searchParams.get('category') === cat.slug ? "text-primary" : "text-gray-600 hover:text-gray-900"
+                  "text-[14px] font-bold text-left py-2 px-3 rounded-xl transition-all hover:bg-gray-50",
+                  searchParams.get('category') === cat.slug 
+                    ? "text-primary bg-primary/5 shadow-sm shadow-primary/5" 
+                    : "text-gray-600 hover:text-gray-900"
                 )}
               >
                 {cat.name}
@@ -89,11 +92,14 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
       )}
 
       {/* Brands Filter */}
-      <div className="space-y-5">
-        <h3 className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400">Popular Brands</h3>
-        <div className="grid grid-cols-1 gap-3">
+      <div className="space-y-6">
+        <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400">Premium Brands</h3>
+        <div className="grid grid-cols-1 gap-2">
           {TOP_BRANDS.map((brand) => (
-            <div key={brand} className="flex items-center space-x-3 group cursor-pointer" onClick={() => toggleItem(currentBrands, brand, 'brands')}>
+            <div key={brand} className={cn(
+              "flex items-center space-x-3 group cursor-pointer p-2 rounded-xl border border-transparent transition-all hover:bg-gray-50",
+              currentBrands.includes(brand) && "bg-primary/5 border-primary/10"
+            )} onClick={() => toggleItem(currentBrands, brand, 'brands')}>
               <Checkbox 
                 id={`brand-${brand}`} 
                 checked={currentBrands.includes(brand)}
@@ -101,7 +107,10 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
               />
               <Label 
                 htmlFor={`brand-${brand}`} 
-                className="text-[13.5px] font-bold text-gray-700 cursor-pointer group-hover:text-primary transition-colors"
+                className={cn(
+                  "text-[13px] font-bold cursor-pointer transition-colors",
+                  currentBrands.includes(brand) ? "text-primary" : "text-gray-600 group-hover:text-gray-900"
+                )}
               >
                 {brand}
               </Label>
@@ -110,50 +119,57 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
         </div>
       </div>
 
-      <Separator className="bg-gray-100" />
+      <Separator className="bg-gray-100/60" />
 
       {/* Price Filter */}
-      <div className="space-y-5">
-        <h3 className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400">Price Range</h3>
-        <div className="flex items-center gap-3">
-          <div className="flex-1 space-y-2">
-            <span className="text-[10px] font-extrabold uppercase text-gray-400 tracking-tighter">Min</span>
-            <input
-              type="number"
-              value={priceRange[0]}
-              onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
-              className="w-full h-11 px-3 border border-gray-200 rounded-xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all"
-            />
+      <div className="space-y-6">
+        <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400">Budget Constraint</h3>
+        <div className="flex flex-col gap-4 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 space-y-2">
+              <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">Start</span>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400">Rs.</span>
+                <input
+                  type="number"
+                  value={priceRange[0]}
+                  onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+                  className="w-full h-10 pl-8 pr-2 bg-white border border-gray-100 rounded-lg text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all shadow-sm"
+                />
+              </div>
+            </div>
+            <div className="flex-1 space-y-2">
+              <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">End</span>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400">Rs.</span>
+                <input
+                  type="number"
+                  value={priceRange[1]}
+                  onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 0])}
+                  className="w-full h-10 pl-8 pr-2 bg-white border border-gray-100 rounded-lg text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-primary/5 transition-all shadow-sm"
+                />
+              </div>
+            </div>
           </div>
-          <span className="text-gray-300 mt-6">-</span>
-          <div className="flex-1 space-y-2">
-            <span className="text-[10px] font-extrabold uppercase text-gray-400 tracking-tighter">Max</span>
-            <input
-              type="number"
-              value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 0])}
-              className="w-full h-11 px-3 border border-gray-200 rounded-xl text-[13px] font-bold focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all"
-            />
-          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full h-10 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white border-gray-200 hover:bg-primary hover:text-white hover:border-primary transition-all duration-500 shadow-xl shadow-primary/5"
+            onClick={() => {
+              updateFilters('minPrice', String(priceRange[0]));
+              updateFilters('maxPrice', String(priceRange[1]));
+            }}
+          >
+            Apply Range
+          </Button>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="w-full h-11 rounded-xl text-[11px] font-extrabold uppercase tracking-widest border-gray-100 hover:bg-gray-50 active:scale-95 transition-all"
-          onClick={() => {
-            updateFilters('minPrice', String(priceRange[0]));
-            updateFilters('maxPrice', String(priceRange[1]));
-          }}
-        >
-          Check Range
-        </Button>
       </div>
 
-      <Separator className="bg-gray-100" />
+      <Separator className="bg-gray-100/60" />
 
       {/* Color Filter */}
-      <div className="space-y-5">
-        <h3 className="text-[12px] font-extrabold uppercase tracking-widest text-gray-400">Colors</h3>
+      <div className="space-y-6">
+        <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400">Color Palette</h3>
         <div className="flex flex-wrap gap-2">
           {POPULAR_COLORS.map((color) => {
             const isSelected = currentColors.includes(color);
@@ -162,10 +178,10 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
                 key={color}
                 onClick={() => toggleItem(currentColors, color, 'colors')}
                 className={cn(
-                  "px-3 py-1.5 rounded-lg border text-[11px] font-extrabold uppercase tracking-tight transition-all",
+                  "px-4 py-2 rounded-xl border text-[10px] font-black uppercase tracking-tight transition-all",
                   isSelected 
-                    ? "bg-primary border-primary text-white shadow-lg" 
-                    : "bg-white border-gray-100 text-gray-500 hover:border-gray-200"
+                    ? "bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-105" 
+                    : "bg-white border-gray-100 text-gray-500 hover:border-gray-300 hover:bg-gray-50 shadow-sm"
                 )}
               >
                 {color}
@@ -177,28 +193,33 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
 
       {/* Availability */}
       <div className="pt-2">
-        <div className="flex items-center space-x-3 group cursor-pointer py-2" onClick={() => updateFilters('inStock', !inStock)}>
-          <Checkbox 
-            id="inStock" 
-            checked={inStock}
-            className="rounded-md border-gray-200 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
-          />
-          <Label 
-            htmlFor="inStock" 
-            className="text-[13.5px] font-bold text-gray-700 cursor-pointer group-hover:text-emerald-500 transition-colors"
-          >
-            Show In-Stock Only
-          </Label>
-        </div>
+        <button 
+          onClick={() => updateFilters('inStock', !inStock)}
+          className={cn(
+            "w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-500 group",
+            inStock 
+              ? "bg-emerald-50 border-emerald-100 text-emerald-700 shadow-md shadow-emerald-500/5 rotate-1" 
+              : "bg-white border-gray-100 text-gray-600 hover:border-gray-200 hover:-rotate-1"
+          )}
+        >
+          <div className="flex items-center gap-3">
+             <div className={cn(
+               "w-3 h-3 rounded-full transition-all",
+               inStock ? "bg-emerald-500 animate-pulse scale-110" : "bg-gray-200"
+             )} />
+             <span className="text-[13px] font-bold uppercase tracking-tight">Active Inventory</span>
+          </div>
+          <Check className={cn("w-4 h-4 transition-all opacity-0", inStock && "opacity-100")} />
+        </button>
       </div>
 
       {hasActiveFilters && (
         <Button 
           variant="ghost" 
-          className="w-full text-destructive hover:text-destructive hover:bg-destructive/5 text-[11px] font-extrabold uppercase tracking-widest"
+          className="w-full h-12 text-destructive hover:text-destructive hover:bg-destructive/5 text-[11px] font-black uppercase tracking-widest rounded-2xl transition-all"
           onClick={clearAllFilters}
         >
-          <X className="w-3 h-3 mr-2" /> Clear All Filters
+          <X className="w-4 h-4 mr-2" /> Reset Refinements
         </Button>
       )}
     </div>
@@ -208,17 +229,19 @@ export function ProductFilters({ category, isMobileTrigger = false }: ProductFil
     return (
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" className="h-11 border-gray-200 rounded-xl px-4 gap-2 text-[11px] font-extrabold uppercase tracking-widest">
-            <SlidersHorizontal className="h-4 w-4" />
-            Filters
-            {hasActiveFilters && <span className="w-2 h-2 bg-primary rounded-full" />}
+          <Button variant="outline" className="h-11 border-gray-200 rounded-xl px-4 gap-2 text-[11px] font-black uppercase tracking-widest shadow-lg shadow-black/5 hover:-translate-y-0.5 transition-all">
+            <Filter className="h-4 w-4 text-primary" />
+            Filter Feed
+            {hasActiveFilters && <span className="w-2 h-2 bg-primary rounded-full animate-bounce" />}
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 overflow-y-auto">
-          <SheetHeader className="p-6 border-b text-left sticky top-0 bg-white z-10">
-            <SheetTitle className="text-sm font-extrabold uppercase tracking-widest">Store Filters</SheetTitle>
+        <SheetContent side="left" className="w-[320px] sm:w-[380px] p-0 overflow-y-auto border-r-0 shadow-2xl">
+          <SheetHeader className="p-8 border-b text-left sticky top-0 bg-white/95 backdrop-blur-md z-20">
+            <SheetTitle className="text-sm font-black uppercase tracking-[0.3em] flex items-center gap-2">
+               <SlidersHorizontal className="w-4 h-4" /> Store Refinements
+            </SheetTitle>
           </SheetHeader>
-          <div className="p-8">
+          <div className="p-10">
             <FilterContent />
           </div>
         </SheetContent>

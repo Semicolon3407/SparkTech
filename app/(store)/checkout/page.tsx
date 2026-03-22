@@ -30,7 +30,7 @@ interface ShippingData {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, clearCart } = useCart();
+  const { items, total, subtotal, shippingCost, tax, clearCart } = useCart();
   const { user } = useAuth();
   const [step, setStep] = useState<CheckoutStep>("shipping");
   const [shippingData, setShippingData] = useState<ShippingData | null>(null);
@@ -80,26 +80,25 @@ export default function CheckoutPage() {
       // Create order in database
       const orderData = {
         items: items.map(({ product, quantity }) => ({
-          productId: product._id,
+          product: product._id,
           name: product.name,
           price: product.price,
           quantity: quantity,
           image: product.images?.[0] || '',
         })),
         shippingAddress: {
-          firstName: shippingData.firstName,
-          lastName: shippingData.lastName,
-          email: shippingData.email,
+          fullName: `${shippingData.firstName} ${shippingData.lastName}`,
           phone: shippingData.phone,
-          address: shippingData.address,
+          street: shippingData.address,
           city: shippingData.city,
-          district: shippingData.district,
-          postalCode: shippingData.postalCode,
+          state: shippingData.district,
+          zipCode: shippingData.postalCode || '44600',
         },
         paymentMethod,
-        notes: shippingData.notes,
+        subtotal,
+        shippingCost,
+        tax,
         total,
-        userId: user?._id,
       };
 
       const response = await fetch("/api/orders", {
@@ -108,31 +107,33 @@ export default function CheckoutPage() {
         body: JSON.stringify(orderData),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to create order");
+        throw new Error(result.error || "Failed to create order");
       }
 
-      const { orderId, paymentUrl } = await response.json();
+      const order = result.data;
 
       // Handle payment based on method
       if (paymentMethod === "cod") {
         clearCart();
         toast.success("Order placed successfully!");
-        router.push(`/orders/${orderId}/confirmation`);
+        router.push(`/orders/${order._id}/confirmation`);
       } else {
         // Redirect to payment gateway
-        if (paymentUrl) {
-          window.location.href = paymentUrl;
+        if (result.paymentUrl) {
+          window.location.href = result.paymentUrl;
         } else {
           // Fallback for demo
           clearCart();
           toast.success("Order placed! Payment simulation complete.");
-          router.push(`/orders/${orderId}/confirmation`);
+          router.push(`/orders/${order._id}/confirmation`);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Checkout error:", error);
-      toast.error("Failed to place order. Please try again.");
+      toast.error(error.message || "Failed to place order. Please try again.");
     } finally {
       setIsProcessing(false);
     }

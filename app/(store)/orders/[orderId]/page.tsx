@@ -10,6 +10,7 @@ import {
   ArrowLeft,
   Download,
   MessageSquare,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 import { formatPrice, formatDate } from "@/lib/utils/format";
+import { OrderService } from "@/lib/services/order-service";
+import { notFound } from "next/navigation";
 
 interface OrderDetailPageProps {
   params: Promise<{
@@ -24,70 +27,22 @@ interface OrderDetailPageProps {
   }>;
 }
 
-// Demo order data
-const getOrder = async (orderId: string) => {
-  return {
-    id: orderId,
-    orderNumber: "ORD-2024-001",
-    userId: "user_001",
-    items: [
-      {
-        productId: "prod_001",
-        name: "iPhone 15 Pro Max 256GB - Natural Titanium",
-        price: 185000,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400",
-      },
-      {
-        productId: "prod_002",
-        name: "Apple AirPods Pro (2nd Generation)",
-        price: 35000,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=400",
-      },
-    ],
-    subtotal: 220000,
-    shipping: 0,
-    tax: 28600,
-    total: 248600,
-    status: "shipped",
-    paymentStatus: "paid",
-    paymentMethod: "esewa",
-    trackingNumber: "NP123456789",
-    shippingAddress: {
-      firstName: "John",
-      lastName: "Doe",
-      email: "john@example.com",
-      phone: "9841234567",
-      address: "Baluwatar, Near US Embassy",
-      city: "Kathmandu",
-      district: "Kathmandu",
-      postalCode: "44600",
-    },
-    timeline: [
-      { status: "Order Placed", date: new Date("2024-02-01T10:30:00"), completed: true },
-      { status: "Payment Confirmed", date: new Date("2024-02-01T10:35:00"), completed: true },
-      { status: "Processing", date: new Date("2024-02-01T14:00:00"), completed: true },
-      { status: "Shipped", date: new Date("2024-02-02T09:00:00"), completed: true },
-      { status: "Out for Delivery", date: null, completed: false },
-      { status: "Delivered", date: null, completed: false },
-    ],
-    createdAt: new Date("2024-02-01"),
-    updatedAt: new Date("2024-02-02"),
-  };
-};
-
 const statusColors: Record<string, string> = {
-  pending: "bg-warning/10 text-warning",
-  processing: "bg-info/10 text-info",
-  shipped: "bg-primary/10 text-primary",
-  delivered: "bg-success/10 text-success",
-  cancelled: "bg-destructive/10 text-destructive",
+  pending: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+  confirmed: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  processing: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
+  shipped: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  delivered: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+  cancelled: "bg-destructive/10 text-destructive border-destructive/20",
 };
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
   const { orderId } = await params;
-  const order = await getOrder(orderId);
+  const order = await OrderService.getOrderById(orderId);
+
+  if (!order) {
+    notFound();
+  }
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
@@ -95,96 +50,139 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
     { label: order.orderNumber, href: `/orders/${orderId}` },
   ];
 
+  // Map database status history to UI timeline
+  const timelineSteps = [
+    { status: "pending", label: "Order Placed" },
+    { status: "confirmed", label: "Payment Confirmed" },
+    { status: "processing", label: "Processing" },
+    { status: "shipped", label: "Shipped" },
+    { status: "delivered", label: "Delivered" },
+  ];
+
+  const timeline = timelineSteps.map(step => {
+    const historyItem = order.statusHistory.find((h: any) => h.status === step.status);
+    return {
+      status: step.label,
+      date: historyItem ? new Date(historyItem.date) : null,
+      completed: !!historyItem,
+      note: historyItem?.note
+    };
+  });
+
+  // Handle cancelled state separately in timeline if it exists
+  if (order.orderStatus === 'cancelled') {
+    const cancelItem = order.statusHistory.find((h: any) => h.status === 'cancelled');
+    timeline.push({
+      status: "Cancelled",
+      date: cancelItem ? new Date(cancelItem.date) : new Date(),
+      completed: true,
+      note: cancelItem?.note || "Order was cancelled"
+    });
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 max-w-7xl animate-in fade-in duration-500">
       <Breadcrumb items={breadcrumbItems} />
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 mt-4">
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Button asChild variant="ghost" size="sm" className="p-0 h-auto">
-              <Link href="/account/orders">
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Back
+          <div className="flex items-center gap-2 mb-3">
+            <Button asChild variant="ghost" size="sm" className="pl-0 h-auto hover:bg-transparent text-muted-foreground hover:text-primary transition-colors">
+              <Link href="/account/orders" className="flex items-center">
+                <ArrowLeft className="h-4 w-4 mr-1.5" />
+                Back to Orders
               </Link>
             </Button>
           </div>
-          <h1 className="text-2xl font-bold">{order.orderNumber}</h1>
-          <p className="text-muted-foreground">
-            Placed on {formatDate(order.createdAt)}
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">{order.orderNumber}</h1>
+            <Badge variant="outline" className={`${statusColors[order.orderStatus] || ""} capitalize font-bold px-3 py-0.5 border shadow-none`}>
+              {order.orderStatus}
+            </Badge>
+          </div>
+          <p className="text-muted-foreground mt-2">
+            Placed on <span className="text-foreground font-medium">{formatDate(order.createdAt)}</span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className={statusColors[order.status] || ""}>
-            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-          </Badge>
-          <Button variant="outline" size="sm">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="shadow-sm font-semibold h-10">
             <Download className="h-4 w-4 mr-2" />
             Invoice
           </Button>
-          <Button variant="outline" size="sm">
+          <Button className="shadow-sm font-semibold h-10 bg-primary text-primary-foreground hover:bg-primary/90">
             <MessageSquare className="h-4 w-4 mr-2" />
             Support
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-8 lg:grid-cols-3">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-8">
           {/* Order Timeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Truck className="h-5 w-5" />
-                Order Status
+          <Card className="shadow-sm border-border/60">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                <Truck className="h-5 w-5 text-primary" />
+                Delivery Tracking
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {order.trackingNumber && (
-                <div className="mb-4 p-3 bg-muted rounded-lg">
-                  <p className="text-sm text-muted-foreground">Tracking Number</p>
-                  <p className="font-mono font-medium">{order.trackingNumber}</p>
+              {order.orderStatus === 'cancelled' && (
+                <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-xl flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-destructive">Order Cancelled</p>
+                    <p className="text-sm text-destructive/80">
+                      {order.statusHistory.find((h: any) => h.status === 'cancelled')?.note || "This order has been cancelled and will not be processed further."}
+                    </p>
+                  </div>
                 </div>
               )}
-              <div className="relative">
-                {order.timeline.map((step, index) => (
-                  <div key={step.status} className="flex gap-4 pb-6 last:pb-0">
+              
+              <div className="relative pt-2 pl-2">
+                {timeline.map((step, index) => (
+                  <div key={index} className="flex gap-6 pb-8 last:pb-0">
                     <div className="flex flex-col items-center">
                       <div
-                        className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                        className={`h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 ring-4 ring-background ${
                           step.completed
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
                             : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {step.completed ? (
-                          <CheckCircle2 className="h-4 w-4" />
+                          <CheckCircle2 className="h-5 w-5" />
                         ) : (
-                          <Clock className="h-4 w-4" />
+                          <Clock className="h-5 w-5" />
                         )}
                       </div>
-                      {index < order.timeline.length - 1 && (
+                      {index < timeline.length - 1 && (
                         <div
-                          className={`w-0.5 flex-1 mt-2 ${
+                          className={`w-0.5 flex-1 mt-2 mb-[-8px] ${
                             step.completed ? "bg-primary" : "bg-muted"
                           }`}
                         />
                       )}
                     </div>
-                    <div className="flex-1 pt-1">
+                    <div className="flex-1 pt-2">
                       <p
-                        className={`font-medium ${
-                          step.completed ? "" : "text-muted-foreground"
+                        className={`font-bold text-lg leading-none ${
+                          step.completed ? "text-foreground" : "text-muted-foreground"
                         }`}
                       >
                         {step.status}
                       </p>
                       {step.date && (
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground mt-1 font-medium">
                           {formatDate(step.date)}
                         </p>
+                      )}
+                      {step.note && step.completed && (
+                         <p className="text-sm text-muted-foreground/70 mt-1 italic italic">
+                           {step.note}
+                         </p>
                       )}
                     </div>
                   </div>
@@ -194,21 +192,21 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           </Card>
 
           {/* Order Items */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5" />
-                Order Items
+          <Card className="shadow-sm border-border/60 overflow-hidden">
+            <CardHeader className="pb-4 bg-muted/30 border-b">
+              <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                <Package className="h-5 w-5 text-primary" />
+                Purchased Items
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {order.items.map((item) => (
+            <CardContent className="p-0">
+              <div className="divide-y divide-border/60">
+                {order.items.map((item: any) => (
                   <div
-                    key={item.productId}
-                    className="flex gap-4 p-4 rounded-lg border border-border"
+                    key={item.product}
+                    className="flex flex-col sm:flex-row gap-6 p-6 transition-colors hover:bg-muted/10"
                   >
-                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
+                    <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-2xl bg-muted border border-border shadow-sm mx-auto sm:mx-0">
                       <Image
                         src={item.image}
                         alt={item.name}
@@ -216,17 +214,20 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium">{item.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Quantity: {item.quantity}
-                      </p>
-                      <p className="font-medium text-primary mt-1">
-                        {formatPrice(item.price)}
-                      </p>
+                    <div className="flex-1 space-y-2 text-center sm:text-left">
+                      <h3 className="font-bold text-lg leading-snug hover:text-primary transition-colors cursor-default">{item.name}</h3>
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
+                        <div className="flex items-center gap-1.5 py-1 px-3 rounded-full bg-muted text-xs font-bold text-muted-foreground">
+                          Qty: {item.quantity}
+                        </div>
+                        <div className="text-primary font-extrabold text-lg">
+                          {formatPrice(item.price)}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-semibold">
+                    <div className="text-center sm:text-right flex flex-col justify-center border-t sm:border-t-0 p-4 sm:p-0 mt-4 sm:mt-0 pt-4">
+                      <p className="text-sm text-muted-foreground font-medium mb-1">Total</p>
+                      <p className="font-extrabold text-xl text-foreground">
                         {formatPrice(item.price * item.quantity)}
                       </p>
                     </div>
@@ -238,81 +239,86 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* Order Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+          <Card className="shadow-sm border-border/60 overflow-hidden">
+            <CardHeader className="bg-muted/30 border-b">
+              <CardTitle className="text-xl font-bold">Financial Summary</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span>{formatPrice(order.subtotal)}</span>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-between text-base leading-none">
+                <span className="text-muted-foreground font-medium">Subtotal</span>
+                <span className="font-bold text-foreground">{formatPrice(order.subtotal)}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Shipping</span>
-                <span>{order.shipping === 0 ? "Free" : formatPrice(order.shipping)}</span>
+              <div className="flex justify-between text-base leading-none">
+                <span className="text-muted-foreground font-medium">Shipping</span>
+                <span className="font-bold text-emerald-500">{order.shippingCost === 0 ? "Free" : formatPrice(order.shippingCost)}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Tax (13% VAT)</span>
-                <span>{formatPrice(order.tax)}</span>
+              <div className="flex justify-between text-base leading-none">
+                <span className="text-muted-foreground font-medium">Tax</span>
+                <span className="font-bold text-foreground">{formatPrice(order.tax)}</span>
               </div>
-              <Separator />
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span className="text-primary">{formatPrice(order.total)}</span>
+              <Separator className="my-2" />
+              <div className="flex justify-between items-center bg-primary/5 p-4 rounded-xl border border-primary/10">
+                <span className="font-extrabold text-lg text-primary">Final Total</span>
+                <span className="text-2xl font-black text-primary tracking-tight">
+                  {formatPrice(order.total)}
+                </span>
               </div>
             </CardContent>
           </Card>
 
           {/* Shipping Address */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="h-5 w-5" />
-                Shipping Address
+          <Card className="shadow-sm border-border/60">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                <MapPin className="h-5 w-5 text-primary" />
+                Shipping Destination
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-sm space-y-1">
-                <p className="font-medium">
-                  {order.shippingAddress.firstName} {order.shippingAddress.lastName}
+            <CardContent className="pt-0">
+              <div className="p-4 rounded-xl border bg-muted/10 space-y-2">
+                <p className="font-extrabold text-foreground text-lg">
+                  {order.shippingAddress.fullName}
                 </p>
-                <p className="text-muted-foreground">{order.shippingAddress.address}</p>
-                <p className="text-muted-foreground">
-                  {order.shippingAddress.city}, {order.shippingAddress.district}
-                </p>
-                {order.shippingAddress.postalCode && (
-                  <p className="text-muted-foreground">{order.shippingAddress.postalCode}</p>
-                )}
-                <p className="text-muted-foreground">{order.shippingAddress.phone}</p>
+                <div className="space-y-1 text-muted-foreground font-medium leading-relaxed">
+                  <p>{order.shippingAddress.street}</p>
+                  <p>
+                    {order.shippingAddress.city}, {order.shippingAddress.state}
+                  </p>
+                  <p className="border-t border-border/40 pt-2 mt-2 flex items-center gap-2">
+                    <Truck className="h-4 w-4" />
+                    {order.shippingAddress.phone}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Payment Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
-                Payment Information
+          <Card className="shadow-sm border-border/60">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                <CreditCard className="h-5 w-5 text-primary" />
+                Transaction Status
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Method</span>
-                  <span className="capitalize">
-                    {order.paymentMethod === "cod"
-                      ? "Cash on Delivery"
-                      : order.paymentMethod}
+            <CardContent className="pt-0">
+              <div className="p-4 rounded-xl border bg-muted/10 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground font-medium text-sm">Provider</span>
+                  <span className="capitalize font-bold bg-primary/10 px-3 py-1 rounded-md text-primary text-xs tracking-wider">
+                    {order.paymentMethod === "cod" ? "Cash on Delivery" : order.paymentMethod}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Status</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground font-medium text-sm">Status</span>
                   <Badge
                     variant={order.paymentStatus === "paid" ? "default" : "secondary"}
-                    className="capitalize"
+                    className={cn(
+                      "capitalize font-bold border-0 shadow-none",
+                      order.paymentStatus === "paid" ? "bg-emerald-500 text-white" : ""
+                    )}
                   >
                     {order.paymentStatus}
                   </Badge>
@@ -322,19 +328,24 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           </Card>
 
           {/* Need Help */}
-          <Card>
-            <CardContent className="pt-6">
-              <h3 className="font-medium mb-2">Need Help?</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                If you have any questions about your order, please contact our support team.
+          <Card className="bg-primary text-primary-foreground shadow-xl border-0 overflow-hidden relative group">
+            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:rotate-12 transition-transform">
+               <MessageSquare className="h-24 w-24" />
+            </div>
+            <CardContent className="pt-8 relative z-10">
+              <h3 className="text-xl font-black mb-2 tracking-tight">Need Assistance?</h3>
+              <p className="text-sm text-primary-foreground/80 mb-6 font-medium leading-snug">
+                Our support team is available 24/7 to help you with any questions regarding this order.
               </p>
-              <div className="space-y-2">
-                <Button variant="outline" className="w-full" asChild>
-                  <Link href="/contact">Contact Support</Link>
+              <div className="space-y-3">
+                <Button variant="secondary" className="w-full font-bold h-11" asChild>
+                  <Link href="/contact">Contact Support Team</Link>
                 </Button>
-                <Button variant="ghost" className="w-full text-destructive hover:text-destructive">
-                  Cancel Order
-                </Button>
+                {order.orderStatus === 'pending' && (
+                  <Button variant="ghost" className="w-full text-white/70 hover:text-white hover:bg-white/10 font-bold border border-white/20">
+                    Cancel Order Request
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -342,4 +353,8 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
       </div>
     </div>
   );
+}
+
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(' ');
 }

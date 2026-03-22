@@ -1,7 +1,13 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronDown } from 'lucide-react';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select';
 
 interface SortSelectorProps {
   currentSort: string;
@@ -19,21 +25,17 @@ export function SortSelector({ currentSort }: SortSelectorProps) {
   };
 
   return (
-    <div className="relative inline-block w-[180px]">
-      <select 
-        value={currentSort}
-        onChange={(e) => handleSortChange(e.target.value)}
-        className="w-full h-11 px-4 py-2 appearance-none bg-white border border-gray-200 rounded-md text-[13px] font-bold text-gray-950 focus:outline-none focus:border-gray-950 transition-all pr-10 hover:border-gray-300"
-      >
-        <option value="newest">Newest First</option>
-        <option value="price-asc">Price: Low to High</option>
-        <option value="price-desc">Price: High to Low</option>
-        <option value="rating">Highest Rated</option>
-        <option value="popular">Most Popular</option>
-      </select>
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-        <ChevronDown className="h-4 w-4" />
-      </div>
-    </div>
+    <Select value={currentSort} onValueChange={handleSortChange}>
+      <SelectTrigger className="w-[180px] h-10 border-gray-100 bg-white font-bold text-[12px] rounded-xl hover:border-gray-200 transition-all shadow-sm">
+        <SelectValue placeholder="Sort Products" />
+      </SelectTrigger>
+      <SelectContent className="rounded-xl border-gray-100 shadow-xl overflow-hidden">
+        <SelectItem className="font-bold text-[12px] py-2.5 cursor-pointer" value="newest">Newest First</SelectItem>
+        <SelectItem className="font-bold text-[12px] py-2.5 cursor-pointer" value="price-asc">Price: Low to High</SelectItem>
+        <SelectItem className="font-bold text-[12px] py-2.5 cursor-pointer" value="price-desc">Price: High to Low</SelectItem>
+        <SelectItem className="font-bold text-[12px] py-2.5 cursor-pointer" value="rating">Highest Rated</SelectItem>
+        <SelectItem className="font-bold text-[12px] py-2.5 cursor-pointer" value="popular">Most Popular</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
