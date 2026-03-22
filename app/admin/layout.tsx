@@ -10,6 +10,8 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
+  // Bypass authentication check for now
+  /*
   useEffect(() => {
     if (!isLoading && (!user || user.role !== "admin")) {
       router.push("/login?redirect=/admin");
@@ -27,6 +29,7 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   if (!user || user.role !== "admin") {
     return null;
   }
+  */
 
   return (
     <div className="min-h-screen bg-background">

@@ -20,7 +20,7 @@ interface OrderReviewProps {
 }
 
 export function OrderReview({ paymentMethod, shippingAddress }: OrderReviewProps) {
-  const { items, subtotal, shipping, tax, total } = useCart();
+  const { items, subtotal, shippingCost: shipping, tax, total } = useCart();
 
   const codCharge = paymentMethod === "cod" ? 100 : 0;
   const finalTotal = total + codCharge;
@@ -36,27 +36,33 @@ export function OrderReview({ paymentMethod, shippingAddress }: OrderReviewProps
       <CardContent className="space-y-4">
         {/* Items */}
         <div className="space-y-3 max-h-64 overflow-y-auto">
-          {items.map((item) => (
-            <div key={item.productId} className="flex gap-3">
+          {items.map(({ product, quantity }) => (
+            <div key={product._id} className="flex gap-3">
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
-                  {item.quantity}
+                {product.images && product.images[0] ? (
+                  <Image
+                    src={product.images[0]}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    <span className="text-gray-300 text-[8px] font-bold uppercase tracking-widest text-center">No Image</span>
+                  </div>
+                )}
+                <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center z-10 overflow-hidden">
+                  {quantity}
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{item.name}</p>
+                <p className="text-sm font-medium truncate">{product.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {formatPrice(item.price)} x {item.quantity}
+                  {formatPrice(product.price)} x {quantity}
                 </p>
               </div>
               <p className="text-sm font-medium">
-                {formatPrice(item.price * item.quantity)}
+                {formatPrice(product.price * quantity)}
               </p>
             </div>
           ))}

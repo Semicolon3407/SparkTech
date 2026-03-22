@@ -51,11 +51,10 @@ export default function CheckoutPage() {
           icon={ShoppingBag}
           title="Your cart is empty"
           description="Add some products to your cart before checking out."
-          action={
-            <Button asChild size="lg">
-              <Link href="/products">Browse Products</Link>
-            </Button>
-          }
+          action={{
+            label: "Browse Products",
+            onClick: () => router.push("/products")
+          }}
         />
       </div>
     );
@@ -80,12 +79,12 @@ export default function CheckoutPage() {
     try {
       // Create order in database
       const orderData = {
-        items: items.map((item) => ({
-          productId: item.productId,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.image,
+        items: items.map(({ product, quantity }) => ({
+          productId: product._id,
+          name: product.name,
+          price: product.price,
+          quantity: quantity,
+          image: product.images?.[0] || '',
         })),
         shippingAddress: {
           firstName: shippingData.firstName,
@@ -100,7 +99,7 @@ export default function CheckoutPage() {
         paymentMethod,
         notes: shippingData.notes,
         total,
-        userId: user?.id,
+        userId: user?._id,
       };
 
       const response = await fetch("/api/orders", {
