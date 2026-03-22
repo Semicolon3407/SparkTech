@@ -8,29 +8,20 @@ import { PriceDisplay } from "@/components/shared/price-display";
 import { Badge } from "@/components/ui/badge";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { useCart } from "@/contexts/cart-context";
-import type { WishlistItem as WishlistItemType } from "@/types";
+import type { Product } from "@/types";
 import { toast } from "sonner";
 
 interface WishlistItemProps {
-  item: WishlistItemType;
+  item: Product;
 }
 
 export function WishlistItem({ item }: WishlistItemProps) {
-  const { removeItem } = useWishlist();
+  const { removeFromWishlist } = useWishlist();
   const { addItem } = useCart();
 
   const handleAddToCart = () => {
-    addItem({
-      productId: item.productId,
-      name: item.name,
-      price: item.price,
-      originalPrice: item.originalPrice,
-      image: item.image,
-      slug: item.slug,
-      quantity: 1,
-      stock: item.stock,
-    });
-    removeItem(item.productId);
+    addItem(item, 1);
+    removeFromWishlist(item._id);
     toast.success("Added to cart");
   };
 
@@ -44,7 +35,7 @@ export function WishlistItem({ item }: WishlistItemProps) {
         className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-muted"
       >
         <Image
-          src={item.image}
+          src={item.images?.[0] || ''}
           alt={item.name}
           fill
           className="object-cover"
@@ -68,7 +59,7 @@ export function WishlistItem({ item }: WishlistItemProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => removeItem(item.productId)}
+            onClick={() => removeFromWishlist(item._id)}
             className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
           >
             <Trash2 className="h-4 w-4" />
@@ -79,7 +70,7 @@ export function WishlistItem({ item }: WishlistItemProps) {
         <div className="mt-auto flex items-center justify-between pt-2">
           <PriceDisplay
             price={item.price}
-            originalPrice={item.originalPrice}
+            comparePrice={item.comparePrice}
             size="sm"
           />
           <Button

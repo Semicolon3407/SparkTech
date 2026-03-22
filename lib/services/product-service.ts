@@ -244,5 +244,9 @@ export const ProductService = {
     return MOCK_PRODUCTS
       .filter(p => p.category === category && p._id !== currentId)
       .slice(0, 4);
+  },
+
+  async getProductsByIds(ids: string[]): Promise<Product[]> {
+    return MOCK_PRODUCTS.filter(p => ids.includes(p._id));
   }
 };

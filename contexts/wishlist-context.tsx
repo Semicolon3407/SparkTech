@@ -11,6 +11,7 @@ interface WishlistContextType {
   toggleWishlist: (productId: string) => Promise<void>;
   isInWishlist: (productId: string) => boolean;
   refreshWishlist: () => Promise<void>;
+  clearWishlist: () => Promise<void>;
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
@@ -111,6 +112,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     return wishlistIds.includes(productId);
   }, [wishlistIds]);
 
+  const clearWishlist = useCallback(async () => {
+    // For now, clear locally. If there's an API, it should be called here
+    setWishlistIds([]);
+  }, []);
+
   return (
     <WishlistContext.Provider
       value={{
@@ -121,6 +127,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         toggleWishlist,
         isInWishlist,
         refreshWishlist,
+        clearWishlist,
       }}
     >
       {children}

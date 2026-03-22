@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,14 +8,56 @@ import { WishlistItem } from "@/components/wishlist/wishlist-item";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
+import { ProductService } from "@/lib/services/product-service";
+import type { Product } from "@/types";
+
+import { useRouter } from "next/navigation";
 
 export default function WishlistPage() {
-  const { items, clearWishlist } = useWishlist();
+  const router = useRouter();
+  const { wishlistIds, clearWishlist } = useWishlist();
+  const [items, setItems] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchWishlistItems() {
+      setIsLoading(true);
+      if (wishlistIds.length > 0) {
+        const products = await ProductService.getProductsByIds(wishlistIds);
+        if (mounted) {
+          setItems(products);
+        }
+      } else {
+        if (mounted) {
+          setItems([]);
+        }
+      }
+      if (mounted) {
+        setIsLoading(false);
+      }
+    }
+    
+    fetchWishlistItems();
+    return () => { mounted = false; };
+  }, [wishlistIds]);
 
   const breadcrumbItems = [
     { label: "Home", href: "/" },
     { label: "Wishlist", href: "/wishlist" },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Breadcrumb items={breadcrumbItems} />
+        <div className="py-12 flex justify-center">
+          <p className="text-muted-foreground">Loading wishlist...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -24,11 +67,10 @@ export default function WishlistPage() {
           icon={Heart}
           title="Your wishlist is empty"
           description="Save items you love by clicking the heart icon on any product. They'll appear here for easy access later."
-          action={
-            <Button asChild size="lg">
-              <Link href="/products">Explore Products</Link>
-            </Button>
-          }
+          action={{
+            label: "Explore Products",
+            onClick: () => router.push("/products")
+          }}
         />
       </div>
     );
@@ -58,7 +100,7 @@ export default function WishlistPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
-          <WishlistItem key={item.productId} item={item} />
+          <WishlistItem key={item._id} item={item} />
         ))}
       </div>
     </div>
