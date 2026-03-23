@@ -9,7 +9,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (name: string, email: string, password: string, phone?: string) => Promise<{ success: boolean; error?: string }>;
-
+  updateProfile: (data: { name: string; email: string; phone?: string }) => Promise<{ success: boolean; error?: string }>;
+  setUser: (user: User | null) => void;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -73,7 +74,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ name, email, password, phone }),
       });
 
-
       const data = await response.json();
 
       if (data.success) {
@@ -84,6 +84,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: data.error || 'Registration failed' };
     } catch {
       return { success: false, error: 'An error occurred during registration' };
+    }
+  };
+
+  const updateProfile = async (data: { name: string; email: string; phone?: string }) => {
+    try {
+      const response = await fetch('/api/auth/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setUser(result.data);
+        return { success: true };
+      }
+
+      return { success: false, error: result.error || 'Update failed' };
+    } catch {
+      return { success: false, error: 'An error occurred during update' };
     }
   };
 
@@ -103,6 +124,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!user,
         login,
         register,
+        updateProfile,
+        setUser,
         logout,
         refreshUser,
       }}

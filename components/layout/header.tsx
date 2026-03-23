@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -65,6 +65,18 @@ export function Header() {
 
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return (
+    <header className="w-full bg-white sticky top-0 z-50 shadow-sm">
+      <div className="bg-primary text-white h-8 md:h-10" />
+      <div className="border-b h-20 md:h-24" />
+    </header>
+  );
 
   return (
     <header className="w-full bg-white sticky top-0 z-50 shadow-sm">
@@ -144,14 +156,39 @@ export function Header() {
 
             <Link href="/cart" className="relative group p-2 hover:bg-gray-50 rounded-full transition-all duration-300">
               <ShoppingCart className="h-6 w-6 md:h-7 md:w-7 stroke-[1.5px] text-gray-950 group-hover:text-primary group-hover:scale-110 transition-all duration-300" />
-              <span className="absolute top-1 right-1 h-4 w-4 md:h-5 md:w-5 rounded-full bg-primary text-white text-[8px] md:text-[10px] font-extrabold flex items-center justify-center shadow-lg border-2 border-white group-hover:scale-110 transition-transform">
-                {itemCount}
-              </span>
+              {itemCount > 0 && (
+                <span className="absolute top-1 right-1 h-4 w-4 md:h-5 md:w-5 rounded-full bg-primary text-white text-[8px] md:text-[10px] font-extrabold flex items-center justify-center shadow-lg border-2 border-white group-hover:scale-110 transition-transform">
+                  {itemCount}
+                </span>
+              )}
             </Link>
 
-            <Link href={isAuthenticated ? "/account" : "/login"} className="group p-2 hover:bg-gray-50 rounded-full transition-all duration-300">
-              <UserIcon className="h-6 w-6 md:h-7 md:w-7 stroke-[1.5px] text-gray-950 group-hover:text-primary group-hover:scale-110 transition-all duration-300" />
-            </Link>
+            {isAuthenticated ? (
+              <Link 
+                href="/account" 
+                className="h-10 w-10 md:h-11 md:w-11 rounded-full bg-primary overflow-hidden flex items-center justify-center text-white font-black text-sm md:text-base border-2 border-white shadow-xl hover:scale-110 active:scale-95 transition-all duration-300"
+                title={`${user?.name}'s Account`}
+              >
+                {user?.avatar ? (
+                  <Image
+                    src={user.avatar}
+                    alt={user?.name || 'User'}
+                    width={44}
+                    height={44}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  user?.name?.charAt(0).toUpperCase()
+                )}
+              </Link>
+            ) : (
+              <Link 
+                href="/login" 
+                className="px-5 py-2.5 rounded-full bg-primary text-white text-[13px] font-black tracking-tight hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/20 active:scale-95 transition-all duration-300 whitespace-nowrap"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
 
         </div>

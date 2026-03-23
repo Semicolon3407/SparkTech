@@ -3,6 +3,9 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import type { Product, CartItem } from '@/types';
 import { SHIPPING, TAX_RATE } from '@/lib/constants';
+import { useAuth } from './auth-context';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface CartContextType {
   items: CartItem[];
@@ -11,12 +14,13 @@ interface CartContextType {
   shippingCost: number;
   tax: number;
   total: number;
-  addItem: (product: Product, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
+  addItem: (product: Product, quantity?: number) => Promise<void>;
+  removeItem: (productId: string) => Promise<void>;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  clearCart: () => Promise<void>;
   isInCart: (productId: string) => boolean;
   getItemQuantity: (productId: string) => number;
+  refreshCart: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -24,93 +28,125 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 const CART_STORAGE_KEY = 'techstore_cart';
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const { isAuthenticated, user } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
-    if (savedCart) {
+  // Load cart - Fetch from API if authenticated, local if not
+  const refreshCart = useCallback(async () => {
+    if (isAuthenticated) {
       try {
-        const parsed = JSON.parse(savedCart);
-        // Validate the structure to clear out old/corrupted data
-        const validItems = parsed.filter((item: any) => 
-          item?.product?._id && Array.isArray(item?.product?.images)
-        );
-        setItems(validItems);
-        if (validItems.length !== parsed.length) {
-          // If we filtered out bad data, update storage
-          localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(validItems));
+        const response = await fetch('/api/cart');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setItems(data.data);
+          }
         }
-      } catch {
-        localStorage.removeItem(CART_STORAGE_KEY);
+      } catch (error) {
+        console.error('Failed to load cart from server:', error);
       }
+    } else {
+      setItems([]);
     }
     setIsHydrated(true);
-  }, []);
+  }, [isAuthenticated]);
 
-  // Save cart to localStorage whenever items change
   useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-    }
-  }, [items, isHydrated]);
+    refreshCart();
+  }, [refreshCart, user]);
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-
-  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-
+  const subtotal = items.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0);
   const shippingCost = subtotal >= SHIPPING.freeThreshold ? 0 : SHIPPING.standardCost;
-
   const tax = Math.round(subtotal * TAX_RATE);
-
   const total = subtotal + shippingCost + tax;
 
-  const addItem = useCallback((product: Product, quantity: number = 1) => {
-    setItems((prev) => {
-      const existingItem = prev.find((item) => item.product._id === product._id);
-      
-      if (existingItem) {
-        return prev.map((item) =>
-          item.product._id === product._id
-            ? { ...item, quantity: Math.min(item.quantity + quantity, product.stock) }
-            : item
-        );
-      }
-      
-      return [...prev, { product, quantity: Math.min(quantity, product.stock) }];
-    });
-  }, []);
-
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((item) => item.product._id !== productId));
-  }, []);
-
-  const updateQuantity = useCallback((productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeItem(productId);
+  const addItem = useCallback(async (product: Product, quantity: number = 1) => {
+    if (!isAuthenticated) {
+      toast.error('Login Required', {
+        description: 'Please log in to your account to add items to your cart.',
+        action: {
+          label: 'Log In',
+          onClick: () => router.push('/login')
+        }
+      });
       return;
     }
 
-    setItems((prev) =>
-      prev.map((item) =>
-        item.product._id === productId
-          ? { ...item, quantity: Math.min(quantity, item.product.stock) }
-          : item
-      )
-    );
-  }, [removeItem]);
+    const productId = product._id;
+    const existingItem = items.find((item) => item.product._id === productId);
+    const newQuantity = existingItem ? Math.min(existingItem.quantity + quantity, product.stock) : Math.min(quantity, product.stock);
 
-  const clearCart = useCallback(() => {
+    try {
+      const res = await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity: newQuantity }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setItems(data.data);
+        toast.success('Added to bag', {
+          description: `${product.name} added to your cart`
+        });
+      }
+    } catch (error) {
+      toast.error('Failed to update cart on server');
+    }
+  }, [items, isAuthenticated, router]);
+
+  const removeItem = useCallback(async (productId: string) => {
+    if (isAuthenticated) {
+      try {
+        const res = await fetch(`/api/cart?productId=${productId}`, { method: 'DELETE' });
+        if (res.ok) {
+          setItems((prev) => prev.filter((item) => item.product._id !== productId));
+        }
+      } catch (error) {
+        toast.error('Failed to remove item from server');
+      }
+    }
+  }, [isAuthenticated]);
+
+  const updateQuantity = useCallback(async (productId: string, quantity: number) => {
+    if (quantity <= 0) {
+      await removeItem(productId);
+      return;
+    }
+
+    if (isAuthenticated) {
+      try {
+        const res = await fetch('/api/cart', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId, quantity }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setItems(data.data);
+        }
+      } catch (error) {
+        toast.error('Failed to update quantity on server');
+      }
+    }
+  }, [isAuthenticated, removeItem]);
+
+  const clearCart = useCallback(async () => {
+    if (isAuthenticated) {
+      await fetch('/api/cart', { method: 'DELETE' });
+    }
     setItems([]);
-  }, []);
+  }, [isAuthenticated]);
 
   const isInCart = useCallback((productId: string) => {
-    return items.some((item) => item.product._id === productId);
+    return items.some((item) => item.product?._id === productId);
   }, [items]);
 
   const getItemQuantity = useCallback((productId: string) => {
-    const item = items.find((item) => item.product._id === productId);
+    const item = items.find((item) => item.product?._id === productId);
     return item?.quantity || 0;
   }, [items]);
 
@@ -129,6 +165,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         isInCart,
         getItemQuantity,
+        refreshCart,
       }}
     >
       {children}

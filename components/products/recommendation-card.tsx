@@ -20,9 +20,6 @@ export function RecommendationCard({ product }: RecommendationCardProps) {
     e.preventDefault();
     e.stopPropagation();
     addItem(product);
-    toast.success('Added to cart', {
-      description: `${product.name} added to your cart`,
-    });
   };
 
   return (

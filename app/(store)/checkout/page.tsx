@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShoppingBag, ArrowLeft, Lock } from "lucide-react";
@@ -30,8 +30,12 @@ interface ShippingData {
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, subtotal, shippingCost, tax, clearCart } = useCart();
+  const { items, total, subtotal, shippingCost, tax, clearCart, refreshCart } = useCart();
   const { user } = useAuth();
+  
+  useEffect(() => {
+    refreshCart();
+  }, [refreshCart]);
   const [step, setStep] = useState<CheckoutStep>("shipping");
   const [shippingData, setShippingData] = useState<ShippingData | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>("esewa");
@@ -77,15 +81,25 @@ export default function CheckoutPage() {
     setIsProcessing(true);
 
     try {
+      // Validate data before sending
+      if (subtotal <= 0) {
+        throw new Error("Invalid cart state. Please try refreshing your cart.");
+      }
+
       // Create order in database
       const orderData = {
-        items: items.map(({ product, quantity }) => ({
-          product: product._id,
-          name: product.name,
-          price: product.price,
-          quantity: quantity,
-          image: product.images?.[0] || '',
-        })),
+        items: items.map(({ product, quantity }) => {
+          if (!product || typeof product === 'string' || !product.name || !product.price) {
+            throw new Error(`Product data missing for some items in your cart. Please try again.`);
+          }
+          return {
+            product: product._id,
+            name: product.name,
+            price: product.price,
+            quantity: quantity,
+            image: product.images?.[0] || '',
+          };
+        }),
         shippingAddress: {
           fullName: `${shippingData.firstName} ${shippingData.lastName}`,
           phone: shippingData.phone,
@@ -114,22 +128,38 @@ export default function CheckoutPage() {
       }
 
       const order = result.data;
+      const paymentParams = result.paymentParams;
 
       // Handle payment based on method
       if (paymentMethod === "cod") {
         clearCart();
         toast.success("Order placed successfully!");
         router.push(`/orders/${order._id}/confirmation`);
-      } else {
-        // Redirect to payment gateway
-        if (result.paymentUrl) {
-          window.location.href = result.paymentUrl;
-        } else {
-          // Fallback for demo
-          clearCart();
-          toast.success("Order placed! Payment simulation complete.");
-          router.push(`/orders/${order._id}/confirmation`);
+      } else if (paymentMethod === "esewa" && paymentParams) {
+        // Create hidden form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = result.paymentUrl;
+
+        for (const [key, value] of Object.entries(paymentParams)) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = value as string;
+          form.appendChild(input);
         }
+
+        document.body.appendChild(form);
+        // Removed clearCart() from here. Will be cleared in callback upon success.
+        form.submit();
+      } else if (paymentMethod === "khalti" && result.paymentUrl) {
+        // Removed clearCart() from here. Will be cleared in callback upon success.
+        window.location.href = result.paymentUrl;
+      } else {
+        // Fallback for demo or other methods
+        clearCart();
+        toast.success("Order placed! Payment simulation complete.");
+        router.push(`/orders/${order._id}/confirmation`);
       }
     } catch (error: any) {
       console.error("Checkout error:", error);

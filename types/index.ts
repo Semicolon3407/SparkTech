@@ -4,6 +4,7 @@ export interface User {
   email: string;
   name: string;
   phone?: string;
+  avatar?: string;
   role: 'user' | 'admin' | 'superadmin';
   addresses: Address[];
   createdAt: Date;

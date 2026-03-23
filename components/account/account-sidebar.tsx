@@ -1,15 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   User,
   Package,
   Heart,
-  MapPin,
-  CreditCard,
-  Bell,
-  Settings,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,26 +29,6 @@ const accountLinks = [
     label: "Wishlist",
     icon: Heart,
   },
-  {
-    href: "/account/addresses",
-    label: "Addresses",
-    icon: MapPin,
-  },
-  {
-    href: "/account/payments",
-    label: "Payment Methods",
-    icon: CreditCard,
-  },
-  {
-    href: "/account/notifications",
-    label: "Notifications",
-    icon: Bell,
-  },
-  {
-    href: "/account/settings",
-    label: "Settings",
-    icon: Settings,
-  },
 ];
 
 export function AccountSidebar() {
@@ -64,8 +41,19 @@ export function AccountSidebar() {
         {/* User Info Card */}
         <div className="p-4 rounded-lg border border-border bg-card">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold text-lg">
-              {user?.name?.charAt(0) || "U"}
+            {/* Avatar: photo or initial */}
+            <div className="h-12 w-12 rounded-full overflow-hidden bg-primary flex items-center justify-center text-primary-foreground font-semibold text-lg shrink-0">
+              {user?.avatar ? (
+                <Image
+                  src={user.avatar}
+                  alt={user.name}
+                  width={48}
+                  height={48}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <span>{user?.name?.charAt(0).toUpperCase() || "U"}</span>
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-medium truncate">{user?.name || "User"}</p>

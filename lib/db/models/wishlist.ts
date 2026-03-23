@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IWishlistItem extends Document {
-  _id: string;
   user: mongoose.Types.ObjectId;
   product: mongoose.Types.ObjectId;
   createdAt: Date;

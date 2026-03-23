@@ -14,9 +14,9 @@ export const OrderService = {
       const newOrder = new Order({
         ...orderData,
         orderNumber,
-        orderStatus: 'pending',
-        paymentStatus: orderData.paymentMethod === 'cod' ? 'pending' : 'paid',
-        statusHistory: [{
+        orderStatus: orderData.orderStatus || 'pending',
+        paymentStatus: orderData.paymentStatus || 'pending',
+        statusHistory: orderData.statusHistory || [{
           status: 'pending',
           date: new Date(),
           note: 'Order placed successfully'

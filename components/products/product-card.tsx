@@ -35,9 +35,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
     e.stopPropagation();
     if (!outOfStock) {
       addItem(product);
-      toast.success('Added to cart', {
-        description: `${product.name} added to your cart`,
-      });
     }
   };
 
@@ -45,10 +42,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     await toggleWishlist(product._id);
-    toast.success(
-      inWishlist ? 'Removed from wishlist' : 'Added to wishlist',
-      { description: product.name }
-    );
   };
 
   return (

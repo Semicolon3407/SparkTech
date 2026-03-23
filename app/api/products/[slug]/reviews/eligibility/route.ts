@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const { slug: productId } = await params;
-    const token = req.cookies.get('auth-token')?.value;
+    const token = req.cookies.get('auth_token')?.value;
 
     if (!token) {
       return NextResponse.json({ eligible: false, reason: 'unauthorized' });

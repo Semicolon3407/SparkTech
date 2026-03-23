@@ -25,9 +25,18 @@ export default function WishlistPage() {
     async function fetchWishlistItems() {
       setIsLoading(true);
       if (wishlistIds.length > 0) {
-        const products = await ProductService.getProductsByIds(wishlistIds);
-        if (mounted) {
-          setItems(products);
+        try {
+          const res = await fetch("/api/products/batch", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ids: wishlistIds }),
+          });
+          const data = await res.json();
+          if (mounted && data.success) {
+            setItems(data.data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch wishlist items:", error);
         }
       } else {
         if (mounted) {

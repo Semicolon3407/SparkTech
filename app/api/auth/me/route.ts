@@ -32,7 +32,9 @@ export async function GET() {
         email: user.email,
         role: user.role,
         phone: user.phone,
+        avatar: user.avatar,
         addresses: user.addresses,
+        createdAt: user.createdAt,
       },
     });
   } catch (error: any) {

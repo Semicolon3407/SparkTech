@@ -2,13 +2,15 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { useAuth } from './auth-context';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface WishlistContextType {
   wishlistIds: string[];
   isLoading: boolean;
-  addToWishlist: (productId: string) => Promise<void>;
+  addToWishlist: (productId: string, productName?: string) => Promise<void>;
   removeFromWishlist: (productId: string) => Promise<void>;
-  toggleWishlist: (productId: string) => Promise<void>;
+  toggleWishlist: (productId: string, productName?: string) => Promise<void>;
   isInWishlist: (productId: string) => boolean;
   refreshWishlist: () => Promise<void>;
   clearWishlist: () => Promise<void>;
@@ -19,11 +21,13 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 const WISHLIST_STORAGE_KEY = 'techstore_wishlist';
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const { isAuthenticated, user } = useAuth();
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Load wishlist - from API if authenticated, from localStorage if not
+  // Load wishlist - Fetch from API if authenticated, local if not
   const refreshWishlist = useCallback(async () => {
     if (isAuthenticated) {
       setIsLoading(true);
@@ -32,79 +36,74 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         if (response.ok) {
           const data = await response.json();
           if (data.success) {
-            setWishlistIds(data.data.map((item: { product: string }) => item.product));
+            setWishlistIds(data.data.map((item: any) => 
+               typeof item.product === 'string' ? item.product : item.product._id
+            ));
           }
         }
       } catch (error) {
-        console.error('Failed to load wishlist:', error);
+        console.error('Failed to load wishlist from server:', error);
       } finally {
         setIsLoading(false);
       }
     } else {
-      // Load from localStorage for guests
-      const saved = localStorage.getItem(WISHLIST_STORAGE_KEY);
-      if (saved) {
-        try {
-          setWishlistIds(JSON.parse(saved));
-        } catch {
-          localStorage.removeItem(WISHLIST_STORAGE_KEY);
-        }
-      }
+      setWishlistIds([]);
     }
+    setIsHydrated(true);
   }, [isAuthenticated]);
 
   useEffect(() => {
     refreshWishlist();
   }, [refreshWishlist, user]);
 
-  // Save to localStorage when not authenticated
-  useEffect(() => {
+  const addToWishlist = useCallback(async (productId: string, productName?: string) => {
     if (!isAuthenticated) {
-      localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlistIds));
-    }
-  }, [wishlistIds, isAuthenticated]);
-
-  const addToWishlist = useCallback(async (productId: string) => {
-    if (isAuthenticated) {
-      try {
-        const response = await fetch('/api/wishlist', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productId }),
-        });
-        if (response.ok) {
-          setWishlistIds((prev) => [...prev, productId]);
+      toast.error('Login Required', {
+        description: 'Please log in to your account to save items to your wishlist.',
+        action: {
+          label: 'Log In',
+          onClick: () => router.push('/login')
         }
-      } catch (error) {
-        console.error('Failed to add to wishlist:', error);
-      }
-    } else {
-      setWishlistIds((prev) => [...prev, productId]);
+      });
+      return;
     }
-  }, [isAuthenticated]);
+
+    try {
+      const res = await fetch('/api/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId }),
+      });
+      if (res.ok) {
+        setWishlistIds((prev) => [...new Set([...prev, productId])]);
+        toast.success('Added to wishlist', {
+          description: productName || 'Product saved to your favorites'
+        });
+      }
+    } catch (error) {
+      toast.error('Failed to update wishlist on server');
+    }
+  }, [isAuthenticated, router]);
 
   const removeFromWishlist = useCallback(async (productId: string) => {
     if (isAuthenticated) {
       try {
-        const response = await fetch(`/api/wishlist?productId=${productId}`, {
-          method: 'DELETE',
-        });
-        if (response.ok) {
+        const res = await fetch(`/api/wishlist?productId=${productId}`, { method: 'DELETE' });
+        if (res.ok) {
           setWishlistIds((prev) => prev.filter((id) => id !== productId));
+          toast.success('Removed from wishlist');
         }
       } catch (error) {
-        console.error('Failed to remove from wishlist:', error);
+        toast.error('Failed to remove item on server');
       }
-    } else {
-      setWishlistIds((prev) => prev.filter((id) => id !== productId));
     }
   }, [isAuthenticated]);
 
-  const toggleWishlist = useCallback(async (productId: string) => {
+  const toggleWishlist = useCallback(async (productId: string, productName?: string) => {
     if (wishlistIds.includes(productId)) {
       await removeFromWishlist(productId);
     } else {
-      await addToWishlist(productId);
+      await addToWishlist(productId, productName);
     }
   }, [wishlistIds, addToWishlist, removeFromWishlist]);
 
@@ -113,7 +112,6 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   }, [wishlistIds]);
 
   const clearWishlist = useCallback(async () => {
-    // For now, clear locally. If there's an API, it should be called here
     setWishlistIds([]);
   }, []);
 

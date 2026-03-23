@@ -17,6 +17,7 @@ export interface IUser extends Document {
   password: string;
   name: string;
   phone?: string;
+  avatar?: string;
   role: 'user' | 'admin' | 'superadmin';
   addresses: IAddress[];
   createdAt: Date;
@@ -57,6 +58,9 @@ const UserSchema = new Schema<IUser>(
       type: String,
       trim: true,
     },
+    avatar: {
+      type: String,
+    },
     role: {
       type: String,
       enum: ['user', 'admin', 'superadmin'],
@@ -72,6 +76,10 @@ const UserSchema = new Schema<IUser>(
 // Index for faster queries
 UserSchema.index({ email: 1 });
 
-const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+// Delete cached model to pick up schema changes (e.g. new fields like avatar)
+if (mongoose.models.User) {
+  delete (mongoose.models as any).User;
+}
+const User: Model<IUser> = mongoose.model<IUser>('User', UserSchema);
 
 export default User;

@@ -39,7 +39,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white border-t pt-20">
+    <footer className="bg-primary text-white border-t border-white/10 pt-20">
       <div className="container mx-auto px-4 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand and Newsletter */}
@@ -51,17 +51,17 @@ export function Footer() {
 
 
             <div className="space-y-4">
-              <h4 className="text-sm font-extrabold uppercase tracking-widest text-gray-900">Subscribe for Updates</h4>
-              <p className="text-sm text-gray-500 leading-relaxed font-medium">
+              <h4 className="text-sm font-extrabold uppercase tracking-widest text-white">Subscribe for Updates</h4>
+              <p className="text-sm text-white/70 leading-relaxed font-medium">
                 Be the first to know about new arrivals, sales, and exclusive store-only events.
               </p>
               <div className="flex gap-2 group/input">
                 <input
                   type="email"
                   placeholder="Your Email Address"
-                  className="flex-1 bg-gray-50 border border-transparent rounded-lg px-4 py-3 text-sm focus:ring-4 focus:ring-primary/10 focus:bg-white focus:border-primary/20 transition-all duration-300 outline-none"
+                  className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-sm placeholder:text-white/40 focus:ring-4 focus:ring-white/10 focus:bg-white/20 focus:border-white/30 transition-all duration-300 outline-none text-white"
                 />
-                <button className="bg-primary text-white p-3 rounded-lg hover:bg-primary/90 hover:-translate-y-0.5 hover:shadow-lg active:scale-95 transition-all duration-300">
+                <button className="bg-white text-primary p-3 rounded-lg hover:bg-white/90 hover:-translate-y-0.5 hover:shadow-lg active:scale-95 transition-all duration-300">
                   <Send className="w-4 h-4" />
                 </button>
               </div>
@@ -72,7 +72,7 @@ export function Footer() {
                 <Link
                   key={i}
                   href="#"
-                  className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white hover:-translate-y-1 hover:shadow-md transition-all duration-300 group"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:bg-white hover:text-primary hover:-translate-y-1 hover:shadow-md transition-all duration-300 group"
                 >
                   <Icon className="w-5 h-5 transition-transform group-hover:scale-110" />
                 </Link>
@@ -82,12 +82,12 @@ export function Footer() {
 
           {/* Categories */}
           <div>
-            <h4 className="text-sm font-extrabold uppercase tracking-widest text-gray-900 mb-8">Categories</h4>
+            <h4 className="text-sm font-extrabold uppercase tracking-widest text-white mb-8">Categories</h4>
             <ul className="space-y-4">
               {footerLinks.categories.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-[14px] text-gray-500 hover:text-primary hover:translate-x-1 flex items-center gap-2 transition-all duration-300 font-medium group">
-                    <span className="w-0 h-[2px] bg-primary group-hover:w-2 transition-all duration-300 rounded-full" />
+                  <Link href={link.href} className="text-[14px] text-white/70 hover:text-white hover:translate-x-1 flex items-center gap-2 transition-all duration-300 font-medium group">
+                    <span className="w-0 h-[2px] bg-white group-hover:w-2 transition-all duration-300 rounded-full" />
                     {link.label}
                   </Link>
                 </li>
@@ -97,12 +97,12 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="text-sm font-extrabold uppercase tracking-widest text-gray-900 mb-8">Support & Services</h4>
+            <h4 className="text-sm font-extrabold uppercase tracking-widest text-white mb-8">Support & Services</h4>
             <ul className="space-y-4">
               {footerLinks.support.map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-[14px] text-gray-500 hover:text-primary hover:translate-x-1 flex items-center gap-2 transition-all duration-300 font-medium group">
-                    <span className="w-0 h-[2px] bg-primary group-hover:w-2 transition-all duration-300 rounded-full" />
+                  <Link href={link.href} className="text-[14px] text-white/70 hover:text-white hover:translate-x-1 flex items-center gap-2 transition-all duration-300 font-medium group">
+                    <span className="w-0 h-[2px] bg-white group-hover:w-2 transition-all duration-300 rounded-full" />
                     {link.label}
                   </Link>
                 </li>
@@ -113,21 +113,21 @@ export function Footer() {
           {/* Contact */}
           <div className="space-y-8">
             <div>
-              <h4 className="text-sm font-extrabold uppercase tracking-widest text-gray-900 mb-8">Get In Touch</h4>
+              <h4 className="text-sm font-extrabold uppercase tracking-widest text-white mb-8">Get In Touch</h4>
               <ul className="space-y-5">
                 <li className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-primary shrink-0" />
-                  <span className="text-sm text-gray-500 font-medium leading-relaxed">
+                  <MapPin className="w-5 h-5 text-white/80 shrink-0" />
+                  <span className="text-sm text-white/70 font-medium leading-relaxed">
                     Main Showroom: Civil Mall, Kathmandu, Nepal
                   </span>
                 </li>
                 <li className="flex items-center gap-3 group">
-                  <Phone className="w-5 h-5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
-                  <a href="tel:+977" className="text-sm text-gray-500 font-medium hover:text-primary transition-colors">+977-1-4XXXXXX</a>
+                  <Phone className="w-5 h-5 text-white/80 shrink-0 group-hover:scale-110 transition-transform" />
+                  <a href="tel:+977" className="text-sm text-white/70 font-medium hover:text-white transition-colors">+977-1-4XXXXXX</a>
                 </li>
                 <li className="flex items-center gap-3 group">
-                  <Mail className="w-5 h-5 text-primary shrink-0 group-hover:scale-110 transition-transform" />
-                  <a href="mailto:support@sparktech.com" className="text-sm text-gray-500 font-medium hover:text-primary transition-colors">support@sparktech.com</a>
+                  <Mail className="w-5 h-5 text-white/80 shrink-0 group-hover:scale-110 transition-transform" />
+                  <a href="mailto:support@sparktech.com" className="text-sm text-white/70 font-medium hover:text-white transition-colors">support@sparktech.com</a>
                 </li>
               </ul>
             </div>
@@ -136,14 +136,14 @@ export function Footer() {
       </div>
 
       {/* Copyright */}
-      <div className="border-t border-gray-100 py-8 bg-gray-50/50">
+      <div className="border-t border-white/10 py-8 bg-black/5">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-[13px] text-gray-400 font-medium">
-            © {currentYear} <span className="text-gray-900 font-extrabold">{APP_NAME.toUpperCase()}</span> . All Rights Reserved.
+          <p className="text-[13px] text-white/40 font-medium">
+            © {currentYear} <span className="text-white font-extrabold">{APP_NAME.toUpperCase()}</span> . All Rights Reserved.
           </p>
           <div className="flex flex-wrap items-center gap-6 mt-4 md:mt-0">
             {footerLinks.legal.map((link) => (
-              <Link key={link.label} href={link.href} className="text-[13px] text-gray-400 hover:text-primary transition-colors font-medium">
+              <Link key={link.label} href={link.href} className="text-[13px] text-white/40 hover:text-white transition-colors font-medium">
                 {link.label}
               </Link>
             ))}

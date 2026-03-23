@@ -26,15 +26,16 @@ export const CURRENCY = {
 };
 
 export const SHIPPING = {
-  freeThreshold: 5000,
-  standardCost: 150,
-  expressCost: 300,
+  freeThreshold: 20,
+  standardCost: 10,
+  expressCost: 10,
 };
 
 export const TAX_RATE = 0.13;
 
 export const DEFAULT_PAGE_SIZE = 12;
 export const ADMIN_PAGE_SIZE = 20;
+
 
 export const CATEGORIES = [
   {
@@ -67,10 +68,10 @@ export const CATEGORIES = [
     slug: 'Speakers',
     icon: Speaker,
   },
-  { 
-    name: 'On Sale', 
-    slug: 'on-sale', 
-    highlight: true 
+  {
+    name: 'On Sale',
+    slug: 'on-sale',
+    highlight: true
   },
 ] as const;
 
