@@ -12,8 +12,9 @@ import { ProductService } from "@/lib/services/product-service";
 import type { Product } from "@/types";
 
 import { useRouter } from "next/navigation";
+import { ProtectedRoute } from "@/components/shared/protected-route";
 
-export default function WishlistPage() {
+function WishlistPageContent() {
   const router = useRouter();
   const { wishlistIds, clearWishlist } = useWishlist();
   const [items, setItems] = useState<Product[]>([]);
@@ -113,5 +114,13 @@ export default function WishlistPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function WishlistPage() {
+  return (
+    <ProtectedRoute>
+      <WishlistPageContent />
+    </ProtectedRoute>
   );
 }

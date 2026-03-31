@@ -36,7 +36,12 @@ export default function LoginPage() {
   // Redirect if already authenticated
   useEffect(() => {
     if (!authLoading && isAuthenticated && user) {
-      if (["admin", "superadmin"].includes(user.role)) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirect = searchParams.get("redirect");
+
+      if (redirect) {
+        router.push(redirect);
+      } else if (["admin", "superadmin"].includes(user.role)) {
         router.push("/admin");
       } else {
         router.push("/");

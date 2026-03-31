@@ -28,7 +28,9 @@ interface ShippingData {
   notes?: string;
 }
 
-export default function CheckoutPage() {
+import { ProtectedRoute } from "@/components/shared/protected-route";
+
+function CheckoutPageContent() {
   const router = useRouter();
   const { items, total, subtotal, shippingCost, tax, clearCart, refreshCart } = useCart();
   const { user } = useAuth();
@@ -46,23 +48,6 @@ export default function CheckoutPage() {
     { label: "Cart", href: "/cart" },
     { label: "Checkout", href: "/checkout" },
   ];
-
-  if (items.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Breadcrumb items={breadcrumbItems} />
-        <EmptyState
-          icon={ShoppingBag}
-          title="Your cart is empty"
-          description="Add some products to your cart before checking out."
-          action={{
-            label: "Browse Products",
-            onClick: () => router.push("/products")
-          }}
-        />
-      </div>
-    );
-  }
 
   const handleShippingSubmit = (data: ShippingData) => {
     setShippingData(data);
@@ -178,6 +163,23 @@ export default function CheckoutPage() {
         phone: shippingData.phone,
       }
     : undefined;
+
+  if (items.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Breadcrumb items={breadcrumbItems} />
+        <EmptyState
+          icon={ShoppingBag}
+          title="Your cart is empty"
+          description="Add some products to your cart before checking out."
+          action={{
+            label: "Browse Products",
+            onClick: () => router.push("/products")
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -331,5 +333,13 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <ProtectedRoute>
+      <CheckoutPageContent />
+    </ProtectedRoute>
   );
 }

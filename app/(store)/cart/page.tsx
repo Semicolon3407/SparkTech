@@ -9,9 +9,10 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { useCart } from "@/contexts/cart-context";
 import { Breadcrumb } from "@/components/shared/breadcrumb";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { ProtectedRoute } from "@/components/shared/protected-route";
 
-export default function CartPage() {
+function CartPageContent() {
   const router = useRouter();
   const { items, clearCart } = useCart();
 
@@ -80,5 +81,13 @@ export default function CartPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CartPage() {
+  return (
+    <ProtectedRoute>
+      <CartPageContent />
+    </ProtectedRoute>
   );
 }
