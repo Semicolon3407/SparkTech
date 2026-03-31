@@ -3,18 +3,22 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
-import { AuthProvider, useAuth } from "@/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
 import { Loader2 } from "lucide-react";
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && (!user || !["admin", "superadmin"].includes(user.role))) {
-      router.push("/login?redirect=/admin");
+    if (!isLoading) {
+      if (!isAuthenticated || !user) {
+        router.push("/login?redirect=/admin");
+      } else if (!["admin", "superadmin"].includes(user.role)) {
+        router.push("/"); // Not an admin, send to public home
+      }
     }
-  }, [user, isLoading, router]);
+  }, [user, isAuthenticated, isLoading, router]);
 
   if (isLoading) {
     return (
@@ -27,7 +31,6 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   if (!user || !["admin", "superadmin"].includes(user.role)) {
     return null;
   }
-
 
   return (
     <div className="min-h-screen bg-background">
@@ -43,8 +46,6 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <AdminLayoutContent>{children}</AdminLayoutContent>
-    </AuthProvider>
+    <AdminLayoutContent>{children}</AdminLayoutContent>
   );
 }
