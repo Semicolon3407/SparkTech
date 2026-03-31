@@ -88,18 +88,6 @@ export function AccountSidebar() {
             );
           })}
         </nav>
-
-        {/* Logout Button */}
-        <div className="pt-4 border-t border-border">
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-            onClick={logout}
-          >
-            <LogOut className="h-5 w-5 mr-3" />
-            Sign Out
-          </Button>
-        </div>
       </div>
     </aside>
   );

@@ -14,11 +14,12 @@ import {
   Linkedin,
   Heart,
   Menu,
-
   X,
   Plus,
   Minus,
   User as UserIcon,
+  LogOut,
+  LayoutDashboard,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Logo } from '@/components/shared/logo';
 
 import { useCart } from '@/contexts/cart-context';
@@ -60,7 +69,7 @@ export function Header() {
   const router = useRouter();
   const { itemCount } = useCart();
   const { wishlistIds } = useWishlist();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
 
 
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -164,23 +173,59 @@ export function Header() {
             </Link>
 
             {isAuthenticated ? (
-              <Link 
-                href="/account" 
-                className="h-10 w-10 md:h-11 md:w-11 rounded-full bg-primary overflow-hidden flex items-center justify-center text-white font-black text-sm md:text-base border-2 border-white shadow-xl hover:scale-110 active:scale-95 transition-all duration-300"
-                title={`${user?.name}'s Account`}
-              >
-                {user?.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt={user?.name || 'User'}
-                    width={44}
-                    height={44}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  user?.name?.charAt(0).toUpperCase()
-                )}
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button 
+                    className="h-10 w-10 md:h-11 md:w-11 rounded-full bg-primary overflow-hidden flex items-center justify-center text-white font-black text-sm md:text-base border-2 border-white shadow-xl hover:scale-110 active:scale-95 transition-all duration-300 outline-none"
+                    title={`${user?.name}'s Account`}
+                  >
+                    {user?.avatar ? (
+                      <Image
+                        src={user.avatar}
+                        alt={user?.name || 'User'}
+                        width={44}
+                        height={44}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      user?.name?.charAt(0).toUpperCase()
+                    )}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 mt-2">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-bold leading-none">{user?.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/account" className="cursor-pointer flex items-center gap-2">
+                      <UserIcon className="h-4 w-4" />
+                      <span>My Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  {["admin", "superadmin"].includes(user?.role || "") && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer text-amber-600 focus:text-amber-600 flex items-center gap-2">
+                        <LayoutDashboard className="h-4 w-4" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => logout()}
+                    className="text-destructive focus:text-destructive cursor-pointer flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Link 
                 href="/login" 

@@ -42,6 +42,8 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
+import { AuthProvider } from '@/contexts/auth-context'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,9 +52,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${montserrat.variable} font-sans antialiased text-gray-950`}>
-        {children}
-        <Toaster richColors position="top-right" />
-        <Analytics />
+        <AuthProvider>
+          {children}
+          <Toaster richColors position="top-right" />
+          <Analytics />
+        </AuthProvider>
       </body>
     </html>
   )
