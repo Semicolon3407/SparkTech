@@ -8,7 +8,6 @@ import {
   MapPin,
   CreditCard,
   ArrowLeft,
-  Download,
   MessageSquare,
   AlertCircle,
 } from "lucide-react";
@@ -35,6 +34,8 @@ const statusColors: Record<string, string> = {
   delivered: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
   cancelled: "bg-destructive/10 text-destructive border-destructive/20",
 };
+
+import { InvoiceButton } from "@/components/orders/invoice-button";
 
 export default async function OrderDetailPage({ params }: OrderDetailPageProps) {
   const { orderId } = await params;
@@ -106,10 +107,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="shadow-sm font-semibold h-10">
-            <Download className="h-4 w-4 mr-2" />
-            Invoice
-          </Button>
+          <InvoiceButton order={order} />
           <Button className="shadow-sm font-semibold h-10 bg-primary text-primary-foreground hover:bg-primary/90">
             <MessageSquare className="h-4 w-4 mr-2" />
             Support
