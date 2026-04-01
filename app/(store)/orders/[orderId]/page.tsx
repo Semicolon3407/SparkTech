@@ -108,9 +108,11 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
         </div>
         <div className="flex items-center gap-3">
           <InvoiceButton order={order} />
-          <Button className="shadow-sm font-semibold h-10 bg-primary text-primary-foreground hover:bg-primary/90">
-            <MessageSquare className="h-4 w-4 mr-2" />
-            Support
+          <Button asChild className="shadow-sm font-semibold h-10 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Link href={`/support?orderId=${order.orderNumber}`}>
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Support
+            </Link>
           </Button>
         </div>
       </div>
