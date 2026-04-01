@@ -15,6 +15,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Product } from "@/types";
@@ -49,7 +50,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
     sku: "",
     images: [""],
     colors: [] as string[],
-    sizes: [] as string[]
+    sizes: [] as string[],
+    isFeatured: false
   });
 
   const [newColor, setNewColor] = useState("");
@@ -69,7 +71,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
         sku: initialData.sku || "",
         images: initialData.images.length > 0 ? initialData.images : [""],
         colors: initialData.colors || [],
-        sizes: initialData.sizes || []
+        sizes: initialData.sizes || [],
+        isFeatured: initialData.isFeatured || false
       });
     }
   }, [initialData]);
@@ -142,6 +145,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
         comparePrice: comparePriceVal > priceVal ? comparePriceVal : undefined,
         stock: Number(formData.stock),
         images: formData.images.filter(img => img.trim() !== ""),
+        isFeatured: formData.isFeatured,
         isActive: true
       };
 
@@ -229,6 +233,19 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 onChange={handleInputChange}
                 required
               />
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 pt-2">
+              <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30">
+                <div className="space-y-0.5">
+                  <label className="text-sm font-bold text-foreground">Featured Product</label>
+                  <p className="text-[10px] text-muted-foreground">Show in Home Page Featured section</p>
+                </div>
+                <Switch 
+                  checked={formData.isFeatured}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isFeatured: !!checked }))}
+                />
+              </div>
             </div>
 
             <Separator className="my-2 bg-border/50" />

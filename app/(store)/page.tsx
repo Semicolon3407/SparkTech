@@ -3,7 +3,6 @@ import { HeroSection } from '@/components/home/hero-section';
 import { PromoSection } from '@/components/home/promo-section';
 import { HomeTheatreSection, DroneShowcaseSection, CategoryBrowseSection } from '@/components/home/extended-sections';
 import { FeaturedProducts } from '@/components/home/featured-products';
-import { DealsSection } from '@/components/home/deals-section';
 import { Newsletter } from '@/components/home/newsletter';
 import { WhatsAppButton } from '@/components/shared/whatsapp-button';
 import { APP_NAME, APP_DESCRIPTION } from '@/lib/constants';
@@ -16,10 +15,6 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const { data: featuredProducts } = await ProductService.getProducts({ isFeatured: true, limit: 8 });
-  const { data: dealProducts } = await ProductService.getProducts({ 
-    sort: 'popular', 
-    limit: 8 
-  });
 
   return (
     <>
@@ -29,7 +24,6 @@ export default async function HomePage() {
       <DroneShowcaseSection />
       <CategoryBrowseSection />
       <FeaturedProducts products={featuredProducts} />
-      <DealsSection products={dealProducts} />
       <Newsletter />
       <WhatsAppButton />
     </>

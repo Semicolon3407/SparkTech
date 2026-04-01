@@ -73,8 +73,6 @@ const UserSchema = new Schema<IUser>(
   }
 );
 
-// Index for faster queries
-UserSchema.index({ email: 1 });
 
 // Delete cached model to pick up schema changes (e.g. new fields like avatar)
 if (mongoose.models.User) {
