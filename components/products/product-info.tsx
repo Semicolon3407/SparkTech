@@ -11,6 +11,8 @@ import { useCart } from '@/contexts/cart-context';
 import { useWishlist } from '@/contexts/wishlist-context';
 import { toast } from 'sonner';
 import type { Product } from '@/types';
+import { useAuth } from '@/contexts/auth-context';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
@@ -20,6 +22,8 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const { addItem, isInCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
@@ -30,6 +34,16 @@ export function ProductInfo({ product, isCompact = false }: ProductInfoProps) {
   const outOfStock = product.stock === 0;
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      toast.error('Please login to add items to your cart', {
+        action: {
+          label: 'Login',
+          onClick: () => router.push('/login'),
+        },
+      });
+      return;
+    }
+
     if (!outOfStock) {
       if (product.colors && product.colors.length > 0 && !selectedColor) {
         toast.error('Please select a color');
