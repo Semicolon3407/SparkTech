@@ -29,8 +29,7 @@ export interface IStatusHistory {
   note?: string;
 }
 
-export interface IOrder extends Document {
-  _id: string;
+export interface IOrder {
   orderNumber: string;
   user: mongoose.Types.ObjectId;
   items: IOrderItem[];
@@ -139,7 +138,7 @@ const OrderSchema = new Schema<IOrder>(
 );
 
 // Indexes
-OrderSchema.index({ orderNumber: 1 });
+
 OrderSchema.index({ user: 1 });
 OrderSchema.index({ orderStatus: 1 });
 OrderSchema.index({ createdAt: -1 });

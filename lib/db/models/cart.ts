@@ -41,7 +41,7 @@ const CartSchema = new Schema<ICart>(
 );
 
 // Index for faster user lookup
-CartSchema.index({ user: 1 });
+
 
 const Cart: Model<ICart> = mongoose.models.Cart || mongoose.model<ICart>('Cart', CartSchema);
 
