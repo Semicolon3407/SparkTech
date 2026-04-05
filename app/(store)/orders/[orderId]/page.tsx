@@ -61,11 +61,27 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   ];
 
   const timeline = timelineSteps.map(step => {
-    const historyItem = order.statusHistory.find((h: any) => h.status === step.status);
+    const historyItem = order.statusHistory?.find((h: any) => h.status === step.status);
+    let completed = !!historyItem;
+    
+    // Automatically mark payment confirmed if paymentStatus is paid
+    if (step.status === 'confirmed' && order.paymentStatus === 'paid') {
+      completed = true;
+    }
+    
+    // Mark as completed if the current orderStatus implies this step was reached
+    // e.g. if status is 'shipped', then 'pending', 'confirmed', and 'processing' should be considered done
+    const statusOrder = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
+    const currentStatusIndex = statusOrder.indexOf(order.orderStatus);
+    const stepIndex = statusOrder.indexOf(step.status);
+    if (stepIndex <= currentStatusIndex && stepIndex !== -1) {
+      completed = true;
+    }
+
     return {
       status: step.label,
-      date: historyItem ? new Date(historyItem.date) : null,
-      completed: !!historyItem,
+      date: historyItem ? new Date(historyItem.date) : (completed ? (order.paymentDetails?.paidAt || order.createdAt) : null),
+      completed: completed,
       note: historyItem?.note
     };
   });

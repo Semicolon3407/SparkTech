@@ -12,16 +12,33 @@ export const OrderService = {
       // Generate order number
       const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       
+      // Prepare initial status history
+      const initialStatusHistory = orderData.statusHistory || [
+        {
+          status: 'pending',
+          date: new Date(),
+          note: 'Order placed successfully'
+        }
+      ];
+
+      // If the order is created with 'confirmed' status (e.g. after successful payment),
+      // add the confirmation step to history if it's not already there.
+      if (orderData.orderStatus === 'confirmed' && !initialStatusHistory.some((h: any) => h.status === 'confirmed')) {
+        initialStatusHistory.push({
+          status: 'confirmed',
+          date: new Date(),
+          note: orderData.paymentMethod === 'cod' 
+            ? 'Order confirmed' 
+            : `Payment confirmed via ${orderData.paymentMethod?.toUpperCase() || 'Online Payment'}`
+        });
+      }
+
       const newOrder = new Order({
         ...orderData,
         orderNumber,
         orderStatus: orderData.orderStatus || 'pending',
         paymentStatus: orderData.paymentStatus || 'pending',
-        statusHistory: orderData.statusHistory || [{
-          status: 'pending',
-          date: new Date(),
-          note: 'Order placed successfully'
-        }]
+        statusHistory: initialStatusHistory
       });
 
       const savedOrder = await newOrder.save();
