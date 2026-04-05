@@ -212,3 +212,15 @@ export interface DashboardStats {
   salesByCategory: { category: string; sales: number }[];
   monthlyRevenue: { month: string; revenue: number }[];
 }
+
+export interface Notification {
+  _id: string;
+  user?: string;
+  title: string;
+  message: string;
+  type: 'order' | 'stock' | 'user' | 'system';
+  isRead: boolean;
+  link?: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}

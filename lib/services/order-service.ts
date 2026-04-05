@@ -2,6 +2,7 @@ import Order from '@/lib/db/models/order';
 import Product from '@/lib/db/models/product';
 import connectDB from '@/lib/db/mongodb';
 import { Order as OrderType, PaginatedResponse } from '@/types';
+import { NotificationService } from './notification-service';
 
 export const OrderService = {
   async createOrder(orderData: any): Promise<any> {
@@ -25,6 +26,14 @@ export const OrderService = {
 
       const savedOrder = await newOrder.save();
       
+      // Create notification for admin
+      await NotificationService.createNotification({
+        title: 'New Order Received',
+        message: `Order #${orderNumber} for Rs. ${orderData.total.toLocaleString()} was placed.`,
+        type: 'order',
+        link: `/admin/orders`
+      });
+
       // Update stock for each item
       for (const item of orderData.items) {
         await Product.findByIdAndUpdate(item.product, {
