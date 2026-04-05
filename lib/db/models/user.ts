@@ -20,6 +20,8 @@ export interface IUser extends Document {
   avatar?: string;
   role: 'user' | 'admin' | 'superadmin';
   addresses: IAddress[];
+  resetPasswordOTP?: string;
+  resetPasswordExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -67,6 +69,8 @@ const UserSchema = new Schema<IUser>(
       default: 'user',
     },
     addresses: [AddressSchema],
+    resetPasswordOTP: String,
+    resetPasswordExpires: Date,
   },
   {
     timestamps: true,

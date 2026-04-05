@@ -1,8 +1,12 @@
 import Order from '@/lib/db/models/order';
 import Product from '@/lib/db/models/product';
+import User from '@/lib/db/models/user';
 import connectDB from '@/lib/db/mongodb';
 import { Order as OrderType, PaginatedResponse } from '@/types';
 import { NotificationService } from './notification-service';
+import { sendEmail } from '@/lib/mail/nodemailer';
+import { getOrderEmailHtml } from '@/lib/mail/order-email-template';
+import { generateInvoiceBuffer } from '@/lib/mail/invoice-pdf-generator';
 
 export const OrderService = {
   async createOrder(orderData: any): Promise<any> {
@@ -56,6 +60,31 @@ export const OrderService = {
         await Product.findByIdAndUpdate(item.product, {
           $inc: { stock: -item.quantity }
         });
+      }
+
+      // Send Order Confirmation Email to User
+      try {
+        const userData = await User.findById(savedOrder.user);
+        if (userData && userData.email) {
+          const emailHtml = getOrderEmailHtml(savedOrder);
+          const pdfBuffer = await generateInvoiceBuffer(savedOrder);
+
+          await sendEmail(
+            userData.email,
+            `Order Confirmation - ${orderNumber}`,
+            emailHtml,
+            [
+              {
+                filename: `Invoice_${orderNumber}.pdf`,
+                content: pdfBuffer,
+              }
+            ]
+          );
+          console.log(`Order confirmation email sent to ${userData.email}`);
+        }
+      } catch (emailError) {
+        console.error('Failed to send order confirmation email:', emailError);
+        // Don't throw, we don't want to fail the order if email fails
       }
 
       return JSON.parse(JSON.stringify(savedOrder));
