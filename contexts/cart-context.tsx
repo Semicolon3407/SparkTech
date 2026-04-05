@@ -21,6 +21,11 @@ interface CartContextType {
   isInCart: (productId: string) => boolean;
   getItemQuantity: (productId: string) => number;
   refreshCart: () => Promise<void>;
+  appliedCoupon: { code: string; discountPercent: number; } | null;
+  discountAmount: number;
+  finalTotal: number;
+  applyCoupon: (code: string) => Promise<void>;
+  removeCoupon: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -33,6 +38,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercent: number; } | null>(null);
 
   // Load cart - Fetch from API if authenticated, local if not
   const refreshCart = useCallback(async () => {
@@ -60,9 +66,44 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0);
+  
+  // 1. Calculate discount first and round it
+  const discountAmount = appliedCoupon ? Math.round((subtotal * appliedCoupon.discountPercent) / 100) : 0;
+  const discountedSubtotal = Math.max(0, subtotal - discountAmount);
+  
+  // 2. Shipping Cost (calculated before discount to not lose free shipping)
   const shippingCost = subtotal >= SHIPPING.freeThreshold ? 0 : SHIPPING.standardCost;
-  const tax = Math.round(subtotal * TAX_RATE);
-  const total = subtotal + shippingCost + tax;
+  
+  // 3. Tax is calculated on the discounted subtotal 
+  const tax = Math.round(discountedSubtotal * TAX_RATE);
+  
+  // 4. Totals
+  const total = subtotal + shippingCost + Math.round(subtotal * TAX_RATE); // Raw total without discount
+  const finalTotal = discountedSubtotal + shippingCost + tax; // Accurate final total
+
+  const applyCoupon = useCallback(async (code: string) => {
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAppliedCoupon({ code: data.code, discountPercent: data.discountPercent });
+        toast.success(`Coupon applied! ${data.discountPercent}% off your order.`);
+      } else {
+        toast.error(data.error || "Invalid coupon");
+      }
+    } catch {
+      toast.error("Failed to apply coupon");
+    }
+  }, []);
+
+  const removeCoupon = useCallback(() => {
+    setAppliedCoupon(null);
+    toast.info("Coupon removed");
+  }, []);
 
   const addItem = useCallback(async (product: Product, quantity: number = 1) => {
     if (!isAuthenticated) {
@@ -166,6 +207,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
         isInCart,
         getItemQuantity,
         refreshCart,
+        appliedCoupon,
+        discountAmount,
+        finalTotal,
+        applyCoupon,
+        removeCoupon,
       }}
     >
       {children}

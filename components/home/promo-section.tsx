@@ -97,7 +97,7 @@ export function PromoSection() {
           />
           <PromoCard 
             title="Sale Products"
-            image="https://images.unsplash.com/photo-1541140532154-b024d715b909?w=1000"
+            image="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1000"
             badgeContent="SALE"
             badgeIcon={Tag}
             buttonText="View Products"

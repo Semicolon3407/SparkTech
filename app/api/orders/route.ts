@@ -72,7 +72,9 @@ export async function POST(req: NextRequest) {
         .digest('base64');
 
       const esewaParams = {
-        amount: orderData.subtotal.toString(),
+        // eSewa requires total_amount = amount + tax_amount + product_service_charge + product_delivery_charge
+        // We calculate 'amount' backwards from the total to ensure discount is properly applied within eSewa's strict validation
+        amount: (orderData.total - orderData.tax - orderData.shippingCost).toString(),
         tax_amount: orderData.tax.toString(),
         product_service_charge: "0",
         product_delivery_charge: orderData.shippingCost.toString(),
@@ -84,6 +86,7 @@ export async function POST(req: NextRequest) {
         signed_field_names: "total_amount,transaction_uuid,product_code",
         signature: signature,
       };
+
 
       return NextResponse.json({
         success: true,

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, Tag } from "lucide-react";
+import { ShoppingBag, Tag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,19 +15,21 @@ interface CartSummaryProps {
 }
 
 export function CartSummary({ showCheckoutButton = true }: CartSummaryProps) {
-  const { items, subtotal, shipping, tax, total, itemCount } = useCart();
-  const [couponCode, setCouponCode] = useState("");
-  const [couponApplied, setCouponApplied] = useState(false);
+  const { 
+    items, subtotal, shippingCost, tax, total, itemCount, 
+    appliedCoupon, discountAmount, finalTotal, applyCoupon, removeCoupon 
+  } = useCart();
+  
+  const [couponInput, setCouponInput] = useState("");
+  const [isApplying, setIsApplying] = useState(false);
 
-  const handleApplyCoupon = () => {
-    // TODO: Implement coupon logic
-    if (couponCode.toLowerCase() === "save10") {
-      setCouponApplied(true);
-    }
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setIsApplying(true);
+    await applyCoupon(couponInput);
+    setIsApplying(false);
+    setCouponInput("");
   };
-
-  const discount = couponApplied ? subtotal * 0.1 : 0;
-  const finalTotal = total - discount;
 
   if (items.length === 0) {
     return null;
@@ -51,7 +53,7 @@ export function CartSummary({ showCheckoutButton = true }: CartSummaryProps) {
         {/* Shipping */}
         <div className="flex justify-between text-sm">
           <span className="text-muted-foreground">Shipping</span>
-          <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
+          <span>{shippingCost === 0 ? "Free" : formatPrice(shippingCost)}</span>
         </div>
 
         {/* Tax */}
@@ -61,13 +63,13 @@ export function CartSummary({ showCheckoutButton = true }: CartSummaryProps) {
         </div>
 
         {/* Coupon */}
-        {couponApplied && (
-          <div className="flex justify-between text-sm text-success">
-            <span className="flex items-center gap-1">
+        {appliedCoupon && (
+          <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
+            <span className="flex items-center gap-1 font-medium">
               <Tag className="h-3 w-3" />
-              Discount (10%)
+              Coupon ({appliedCoupon.discountPercent}%)
             </span>
-            <span>-{formatPrice(discount)}</span>
+            <span className="font-medium">-{formatPrice(discountAmount)}</span>
           </div>
         )}
 
@@ -80,36 +82,34 @@ export function CartSummary({ showCheckoutButton = true }: CartSummaryProps) {
         </div>
 
         {/* Coupon Input */}
-        {!couponApplied && (
+        {!appliedCoupon && (
           <div className="flex gap-2">
             <Input
               placeholder="Coupon code"
-              value={couponCode}
-              onChange={(e) => setCouponCode(e.target.value)}
-              className="h-9"
+              value={couponInput}
+              onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === "Enter" && handleApplyCoupon()}
+              className="h-9 uppercase font-mono"
             />
             <Button
               variant="outline"
               size="sm"
               onClick={handleApplyCoupon}
-              disabled={!couponCode}
+              disabled={!couponInput.trim() || isApplying}
             >
-              Apply
+              {isApplying ? <Loader2 className="h-4 w-4 animate-spin" /> : "Apply"}
             </Button>
           </div>
         )}
 
-        {couponApplied && (
-          <div className="flex items-center justify-between bg-success/10 text-success text-sm px-3 py-2 rounded-lg">
-            <span>Coupon SAVE10 applied!</span>
+        {appliedCoupon && (
+          <div className="flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-sm px-3 py-2 rounded-lg border border-emerald-200 dark:border-emerald-900/50">
+            <span className="font-medium">Code {appliedCoupon.code} applied!</span>
             <Button
               variant="ghost"
               size="sm"
-              className="h-auto p-0 text-success hover:text-success/80"
-              onClick={() => {
-                setCouponApplied(false);
-                setCouponCode("");
-              }}
+              className="h-auto p-0 hover:text-emerald-800 dark:hover:text-emerald-300"
+              onClick={removeCoupon}
             >
               Remove
             </Button>

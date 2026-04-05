@@ -8,6 +8,7 @@ import {
   Package,
   Heart,
   LogOut,
+  Ticket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,11 @@ const accountLinks = [
     href: "/wishlist",
     label: "Wishlist",
     icon: Heart,
+  },
+  {
+    href: "/account/coupons",
+    label: "My Coupons",
+    icon: Ticket,
   },
 ];
 

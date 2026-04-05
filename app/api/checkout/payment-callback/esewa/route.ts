@@ -84,6 +84,15 @@ export async function GET(req: NextRequest) {
       { $set: { items: [] } }
     );
 
+    // If a coupon was used, consume it now
+    if (pendingOrder.orderData.appliedCoupon) {
+      const Coupon = (await import("@/lib/db/models/coupon")).default;
+      await Coupon.findOneAndUpdate(
+        { code: pendingOrder.orderData.appliedCoupon },
+        { isUsed: true }
+      );
+    }
+
     // Delete the pending order record
     await PendingOrder.findByIdAndDelete(pendingOrderId);
 

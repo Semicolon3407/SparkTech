@@ -4,6 +4,7 @@ import User from '@/lib/db/models/user';
 import connectDB from '@/lib/db/mongodb';
 import { Order as OrderType, PaginatedResponse } from '@/types';
 import { NotificationService } from './notification-service';
+import { CouponService } from './coupon-service';
 import { sendEmail } from '@/lib/mail/nodemailer';
 import { getOrderEmailHtml } from '@/lib/mail/order-email-template';
 import { generateInvoiceBuffer } from '@/lib/mail/invoice-pdf-generator';
@@ -81,6 +82,13 @@ export const OrderService = {
             ]
           );
           console.log(`Order confirmation email sent to ${userData.email}`);
+
+          // Check and award loyalty coupon
+          await CouponService.checkAndAwardCoupon(
+            String(savedOrder.user),
+            userData.email,
+            userData.name
+          );
         }
       } catch (emailError) {
         console.error('Failed to send order confirmation email:', emailError);

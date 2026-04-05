@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShoppingBag, ArrowLeft, Lock } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Lock, Tag, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
 import { PaymentMethod, type PaymentMethodType } from "@/components/checkout/payment-method";
 import { OrderReview } from "@/components/checkout/order-review";
@@ -32,7 +33,7 @@ import { ProtectedRoute } from "@/components/shared/protected-route";
 
 function CheckoutPageContent() {
   const router = useRouter();
-  const { items, total, subtotal, shippingCost, tax, clearCart, refreshCart } = useCart();
+  const { items, total, subtotal, shippingCost, tax, finalTotal, appliedCoupon, clearCart, refreshCart } = useCart();
   const { user } = useAuth();
   
   useEffect(() => {
@@ -97,7 +98,8 @@ function CheckoutPageContent() {
         subtotal,
         shippingCost,
         tax,
-        total,
+        total: finalTotal,
+        appliedCoupon: appliedCoupon?.code || null,
       };
 
       const response = await fetch("/api/orders", {
@@ -114,6 +116,16 @@ function CheckoutPageContent() {
 
       const order = result.data;
       const paymentParams = result.paymentParams;
+
+      // Mark coupon as used immediately ONLY if COD.
+      // For eSewa/Khalti, it will be marked as used in the backend callback upon successful payment.
+      if (appliedCoupon && paymentMethod === "cod") {
+        await fetch("/api/coupons/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: appliedCoupon.code, markUsed: true }),
+        });
+      }
 
       // Handle payment based on method
       if (paymentMethod === "cod") {

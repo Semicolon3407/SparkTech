@@ -20,10 +20,10 @@ interface OrderReviewProps {
 }
 
 export function OrderReview({ paymentMethod, shippingAddress }: OrderReviewProps) {
-  const { items, subtotal, shippingCost: shipping, tax, total } = useCart();
+  const { items, subtotal, shippingCost: shipping, tax, finalTotal: cartFinalTotal, appliedCoupon, discountAmount } = useCart();
 
   const codCharge = paymentMethod === "cod" ? 100 : 0;
-  const finalTotal = total + codCharge;
+  const finalTotal = cartFinalTotal + codCharge;
 
   return (
     <Card className="sticky top-24">
@@ -100,6 +100,14 @@ export function OrderReview({ paymentMethod, shippingAddress }: OrderReviewProps
             <span className="text-muted-foreground">Tax (13% VAT)</span>
             <span>{formatPrice(tax)}</span>
           </div>
+          {appliedCoupon && (
+            <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+              <span className="flex items-center gap-1">
+                Coupon ({appliedCoupon.discountPercent}%)
+              </span>
+              <span>-{formatPrice(discountAmount)}</span>
+            </div>
+          )}
           {codCharge > 0 && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">COD Charge</span>
